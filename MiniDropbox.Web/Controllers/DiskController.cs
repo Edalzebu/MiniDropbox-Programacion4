@@ -78,7 +78,7 @@ namespace MiniDropbox.Web.Controllers
                 Error("There was a problem uploading the file :( , please try again!!!");
                 return RedirectToAction("ListAllContent");
             }
-
+            
             var fileSize = fileControl.ContentLength;
 
             if (fileSize > 10485760)
@@ -86,12 +86,19 @@ namespace MiniDropbox.Web.Controllers
                 Error("The file must be of 10 MB or less!!!");
                 return RedirectToAction("ListAllContent");
             }
+            fileUploader(fileControl,User.Identity.Name);
 
-            var userData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            Success("File uploaded successfully!!! :D");
+            return RedirectToAction("ListAllContent");
+        }
+
+        private bool fileUploader(HttpPostedFileBase fileControl, string user)
+        {
+            var userData = _readOnlyRepository.First<Account>(x => x.EMail == user);
             var actualPath = Session["ActualPath"].ToString();
             var fileName = Path.GetFileName(fileControl.FileName);
 
-            var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/"+actualPath);
+            var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/" + actualPath);
             //var directoryInfo = new DirectoryInfo(serverFolderPath);
 
             //if (!directoryInfo.Exists)
@@ -118,14 +125,14 @@ namespace MiniDropbox.Web.Controllers
 
             var path = Path.Combine(serverFolderPath, fileName);
 
-            var fileInfo = new DirectoryInfo(serverFolderPath+fileName);
+            var fileInfo = new DirectoryInfo(serverFolderPath + fileName);
 
             if (fileInfo.Exists)
             {
                 var bddInfo = userData.Files.FirstOrDefault(f => f.Name == fileName);
                 bddInfo.ModifiedDate = DateTime.Now;
                 bddInfo.Type = fileControl.ContentType;
-                bddInfo.FileSize = fileSize;
+                bddInfo.FileSize = fileControl.ContentLength;
             }
             else
             {
@@ -134,7 +141,7 @@ namespace MiniDropbox.Web.Controllers
                     Name = fileName,
                     CreatedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now,
-                    FileSize = fileSize,
+                    FileSize = fileControl.ContentLength,
                     Type = fileControl.ContentType,
                     Url = serverFolderPath,
                     IsArchived = false,
@@ -144,9 +151,6 @@ namespace MiniDropbox.Web.Controllers
 
             fileControl.SaveAs(path);
             _writeOnlyRepository.Update(userData);
-
-            Success("File uploaded successfully!!! :D");
-            return RedirectToAction("ListAllContent");
         }
 
         public ActionResult DeleteFile(int fileId)
