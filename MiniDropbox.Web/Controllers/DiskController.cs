@@ -151,6 +151,7 @@ namespace MiniDropbox.Web.Controllers
 
             fileControl.SaveAs(path);
             _writeOnlyRepository.Update(userData);
+            return false;
         }
 
         public ActionResult DeleteFile(int fileId)

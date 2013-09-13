@@ -25,7 +25,7 @@ namespace MiniDropbox.Web.Controllers.API
         }
 
         // GET api/files     
-        public IEnumerable<string> Get(string token)
+        public IEnumerable<string> Get([FromUri]string token)
         {
             var account = CheckPermissions(token);
             if (CheckCuenta(account))
@@ -36,22 +36,28 @@ namespace MiniDropbox.Web.Controllers.API
         }
 
         // GET api/files/5
-        public string Get(int id, string token)
+        public FileModel Get([FromUri]int folderid, [FromUri]string token)
         {
             var account = CheckPermissions(token);
             if (CheckCuenta(account))
             {
+                
                 //Mandar el File con ese ID si le pertenece
             }
-            return "value";
+            return null;
+        }
+
+        public bool CreateFolder()
+        {
+            return false;
         }
 
         // POST api/files
         public string Post([FromBody]string dirAt, string name) // Para crear una carpeta
         {
-            if (UploadFile(file))
+            if (CreateFolder())
             {
-                return file.FileName + " ha sido subido.";
+                return name+" ha sido creado.";
             }
             return "test";
 

@@ -9,16 +9,27 @@ using MiniDropbox.Domain;
 using MiniDropbox.Domain.Entities;
 using MiniDropbox.Domain.Services;
 using MiniDropbox.Web.Models;
+using MiniDropbox.Web.Models.Api;
 
 namespace MiniDropbox.Web.Controllers.API
 {
     public class AuthController : ApiController
     {
-         private readonly IReadOnlyRepository _readOnlyRepository;
+        private const int MinsForTimeOut = 20;
+        private readonly IReadOnlyRepository _readOnlyRepository;
         private readonly IWriteOnlyRepository _writeOnlyRepository;
+
 
         public AuthController(IReadOnlyRepository readOnlyRepository, IWriteOnlyRepository writeOnlyRepository)
         {
+            if (readOnlyRepository == null)
+            {
+                throw new ArgumentNullException("readOnlyRepository");
+            }
+            if (writeOnlyRepository == null)
+            {
+                throw new ArgumentNullException("writeOnlyRepository");
+            }
             _readOnlyRepository = readOnlyRepository;
             _writeOnlyRepository = writeOnlyRepository;
         }
@@ -31,21 +42,22 @@ namespace MiniDropbox.Web.Controllers.API
             {
                 return Mapper.Map<Account, AccountProfileModel>(account);
             }
+            
             return null;
         }
 
         
         // POST api/auth
-        public string Post([FromBody]string username, string password)
+        public string Post([FromBody]AuthenticationModel authenticationModel)
         {
 
-            if (checkCredenciales(username, password))
+            if (checkCredenciales(authenticationModel.Username, authenticationModel.Password))
             {
-                return CreateTokenForUser(username);
+                return CreateTokenForUser(authenticationModel.Username);
             }
             return "ERROR: Credenciales Invalidos";
         }
-
+        
         
 
        private bool checkCuenta(Account account)
@@ -69,9 +81,9 @@ namespace MiniDropbox.Web.Controllers.API
             return false;
         }
 
-        private DateTime TwentyMinutesPermission()
+        private DateTime MinutesPermission()
         {
-            return DateTime.Now.AddMinutes(20);
+            return DateTime.Now.AddMinutes(MinsForTimeOut);
         }
 
         private string CreateTokenForUser(string userName)
@@ -81,7 +93,7 @@ namespace MiniDropbox.Web.Controllers.API
             {
                 var tokenString = EncriptacionMD5.Encriptar(userName) + GetHashCode();
                 var key = new ApiKeys();
-                key.ExpirationTime = TwentyMinutesPermission();
+                key.ExpirationTime = MinutesPermission();
                 key.UserId = account.Id;
                 key.Token = tokenString;
                 _writeOnlyRepository.Create(key);
@@ -92,12 +104,18 @@ namespace MiniDropbox.Web.Controllers.API
         private Account CheckPermissions(string token) // Hace un check si el token existe, si existe devuelve una cuenta, sino null;
         {
             var access = _readOnlyRepository.First<ApiKeys>(x => x.Token == token);
-            if (access != null)
+            if (access.IsTokenActive())
             {
-                var account = _readOnlyRepository.First<Account>(x => x.Id == access.UserId);
-                return account;
+                if (access != null)
+                {
+                    var account = _readOnlyRepository.First<Account>(x => x.Id == access.UserId);
+                    return account;
+                }
             }
+            
             return null;
         }
+
+       
     }
 }
