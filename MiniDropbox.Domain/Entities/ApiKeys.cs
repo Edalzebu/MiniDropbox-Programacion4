@@ -13,7 +13,7 @@ namespace MiniDropbox.Domain.Entities
         public virtual long UserId { get; set; }
         public virtual DateTime ExpirationTime { get; set; }
 
-        public bool IsTokenActive()
+        public virtual bool IsTokenActive()
         {
             if (DateTime.Now > ExpirationTime)
             {
