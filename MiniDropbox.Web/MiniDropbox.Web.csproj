@@ -211,6 +211,7 @@
     <Compile Include="Models\Api\CreateFolderModel.cs" />
     <Compile Include="Models\Api\DeleteFolderModel.cs" />
     <Compile Include="Models\Api\FolderModel.cs" />
+    <Compile Include="Models\Api\UploadFileModel.cs" />
     <Compile Include="Models\ChangePasswordModel.cs" />
     <Compile Include="Models\ChangeUserSpaceLimitModel.cs" />
     <Compile Include="Models\DiskContentModel.cs" />
