@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
+using Amazon.S3.Model;
 using AutoMapper;
 using BootstrapMvcSample.Controllers;
-using BootstrapSupport;
-using FizzWare.NBuilder;
-using FluentNHibernate.Testing.Values;
 using MiniDropbox.Domain;
 using MiniDropbox.Domain.Services;
 using MiniDropbox.Web.Models;
-using NHibernate.Mapping;
 using File = MiniDropbox.Domain.File;
 
 namespace MiniDropbox.Web.Controllers
@@ -35,7 +31,8 @@ namespace MiniDropbox.Web.Controllers
         {
             //var actualPath = Session["ActualPath"].ToString();
             var actualFolder = Session["ActualFolder"].ToString();
-            var userFiles = _readOnlyRepository.First<Account>(x=>x.EMail==User.Identity.Name).Files;
+            var userData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var userFiles = userData.Files;
 
             var userContent = new List<DiskContentModel>();
 
@@ -44,7 +41,8 @@ namespace MiniDropbox.Web.Controllers
                 if (file == null)
                     continue;
 
-                var fileFolder = file.Url.Split('\\').LastOrDefault();
+                var fileFolderArray = file.Url.Split('/');
+                var fileFolder =fileFolderArray.Length>1?fileFolderArray[fileFolderArray.Length-2]:fileFolderArray.FirstOrDefault();
 
                 if(!file.IsArchived && fileFolder.Equals(actualFolder) && !string.Equals(file.Name,actualFolder))
                     userContent.Add(Mapper.Map<DiskContentModel>(file));
@@ -91,7 +89,8 @@ namespace MiniDropbox.Web.Controllers
             var actualPath = Session["ActualPath"].ToString();
             var fileName = Path.GetFileName(fileControl.FileName);
 
-            var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/"+actualPath);
+            //var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/"+actualPath);
+           
             //var directoryInfo = new DirectoryInfo(serverFolderPath);
 
             //if (!directoryInfo.Exists)
@@ -116,16 +115,17 @@ namespace MiniDropbox.Web.Controllers
             //    });
             //}
 
-            var path = Path.Combine(serverFolderPath, fileName);
+            //var path = Path.Combine(serverFolderPath, fileName);
 
-            var fileInfo = new DirectoryInfo(serverFolderPath+fileName);
+            //var fileInfo = new DirectoryInfo(serverFolderPath+fileName);
 
-            if (fileInfo.Exists)
+            if (userData.Files.Count(l=>l.Name==fileName && l.Url.EndsWith(actualPath) && !l.IsArchived)>0)//Actualizar Info Archivo
             {
                 var bddInfo = userData.Files.FirstOrDefault(f => f.Name == fileName);
                 bddInfo.ModifiedDate = DateTime.Now;
                 bddInfo.Type = fileControl.ContentType;
                 bddInfo.FileSize = fileSize;
+                _writeOnlyRepository.Update(bddInfo);
             }
             else
             {
@@ -136,14 +136,22 @@ namespace MiniDropbox.Web.Controllers
                     ModifiedDate = DateTime.Now,
                     FileSize = fileSize,
                     Type = fileControl.ContentType,
-                    Url = serverFolderPath,
+                    Url = actualPath,
                     IsArchived = false,
                     IsDirectory = false
                 });
+                _writeOnlyRepository.Update(userData);
             }
 
-            fileControl.SaveAs(path);
-            _writeOnlyRepository.Update(userData);
+            //fileControl.SaveAs(path);
+            var putObjectRequest = new PutObjectRequest
+            {
+                BucketName = userData.BucketName,
+                Key = actualPath + fileName,
+                InputStream = fileControl.InputStream
+            };
+
+            AWSClient.PutObject(putObjectRequest);
 
             Success("File uploaded successfully!!! :D");
             return RedirectToAction("ListAllContent");
@@ -156,11 +164,57 @@ namespace MiniDropbox.Web.Controllers
 
             if (fileToDelete != null)
             {
-                
-                System.IO.File.Delete(fileToDelete.Url+fileToDelete.Name);
+                if (!fileToDelete.IsDirectory)
+                {
+                    var deleteRequest = new DeleteObjectRequest
+                    {
+                        BucketName = userData.BucketName,
+                        Key = fileToDelete.Url + fileToDelete.Name
+                    };
+                    AWSClient.DeleteObject(deleteRequest);
+                    fileToDelete.IsArchived = true;
+                }
+                else//Borrar carpeta con todos sus archivos
+                {
+                    DeleteFolder(fileToDelete.Id);
+                    //var filesList = new List<KeyVersion>();
+                    //var userFiles = userData.Files;
 
-                fileToDelete.IsArchived = true;
+                    //foreach (var file in userFiles)
+                    //{
+                    //    if (file == null)
+                    //        continue;
 
+                    //    var fileFolderArray = file.Url.Split('/');
+                    //    var fileFolder = fileFolderArray.Length > 1 ? fileFolderArray[fileFolderArray.Length - 2] : fileFolderArray.FirstOrDefault();
+
+                    //    if (!file.IsArchived && fileFolder.Equals(fileToDelete.Name) &&
+                    //        !string.Equals(file.Name, fileToDelete.Name))
+                    //    {
+                    //        filesList.Add(!file.IsDirectory ? new KeyVersion(file.Url + file.Name) : new KeyVersion(file.Url+file.Name + "/"));
+                    //        file.IsArchived = true;
+                    //    }
+
+                    fileToDelete.IsArchived = true;
+                    //}
+
+                    //filesList.Add(new KeyVersion(fileToDelete.Name+"/"));
+
+                    //var deleteRequest = new DeleteObjectsRequest
+                    //{
+                    //    BucketName = userData.BucketName,
+                    //    Keys = filesList
+                    //};
+
+                    //AWSClient.DeleteObjects(deleteRequest);
+
+                        var deleteRequest = new DeleteObjectRequest
+                        {
+                            BucketName = userData.BucketName,
+                            Key = fileToDelete.Url + fileToDelete.Name+"/"
+                        };
+                        AWSClient.DeleteObject(deleteRequest);
+                }
                 _writeOnlyRepository.Update(userData);
             }
 
@@ -177,23 +231,26 @@ namespace MiniDropbox.Web.Controllers
             }
 
             var userData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
-
-            if (folderName == userData.EMail)
+            
+            if (userData.Files.Count(l=>l.Name==folderName)>0)
             {
                 Error("Folder already exists!!!");
                 return RedirectToAction("ListAllContent");
             }
 
             var actualPath = Session["ActualPath"].ToString();
-            var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/" + actualPath + "/"+folderName);
 
-            var folderInfo = new DirectoryInfo(serverFolderPath);
+            var putFolder = new PutObjectRequest { BucketName = userData.BucketName, Key = actualPath+folderName+"/", ContentBody = string.Empty };
+            AWSClient.PutObject(putFolder);
+            //var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/" + actualPath + "/"+folderName);
 
-            if (folderInfo.Exists)
-            {
-                Error("Folder already exists!!!");
-                return RedirectToAction("ListAllContent");
-            }
+            //var folderInfo = new DirectoryInfo(serverFolderPath);
+
+            //if (folderInfo.Exists)
+            //{
+            //    Error("Folder already exists!!!");
+            //    return RedirectToAction("ListAllContent");
+            //}
 
             
             userData.Files.Add(new File
@@ -205,43 +262,106 @@ namespace MiniDropbox.Web.Controllers
                 IsDirectory = true,
                 ModifiedDate = DateTime.Now,
                 Type = "",
-                Url = Server.MapPath("~/App_Data/UploadedFiles/" + actualPath)
+                Url = actualPath
             });
 
-            var result=Directory.CreateDirectory(serverFolderPath);
+            //var result=Directory.CreateDirectory(serverFolderPath);
 
-            if(!result.Exists)
-                Error("The folder was not created!!! Try again please!!!");
-            else
-            {
+            //if(!result.Exists)
+            //    Error("The folder was not created!!! Try again please!!!");
+            //else
+            //{
                 Success("The folder was created successfully!!!");
                 _writeOnlyRepository.Update(userData);
-            }
+            //}
 
             return RedirectToAction("ListAllContent");
+        }
+
+        public void DeleteFolder(long folderId)
+        {
+            var userData = _readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
+            var folderToDelete = userData.Files.FirstOrDefault(f => f.Id == folderId);
+
+            //if (!folderToDelete.IsDirectory)
+            //    {
+            //        var deleteRequest = new DeleteObjectRequest
+            //        {
+            //            BucketName = userData.BucketName,
+            //            Key = fileToDelete.Url + fileToDelete.Name
+            //        };
+            //        AWSClient.DeleteObject(deleteRequest);
+            //        fileToDelete.IsArchived = true;
+            //    }
+            //    else
+            //    {
+                    var userFiles = userData.Files.Where(t=>t.Url.Contains(folderToDelete.Name));
+
+                    foreach (var file in userFiles)
+                    {
+                        if (file == null)
+                            continue;
+
+                        if(file.IsDirectory)
+                            DeleteFolder(file.Id);
+                        
+                        var fileFolderArray = file.Url.Split('/');
+                        var fileFolder = fileFolderArray.Length > 1 ? fileFolderArray[fileFolderArray.Length - 2] : fileFolderArray.FirstOrDefault();
+
+                        if (!file.IsArchived && fileFolder.Equals(folderToDelete.Name) &&
+                            !string.Equals(file.Name, folderToDelete.Name))
+                        {
+                            var deleteRequest = new DeleteObjectRequest
+                            {
+                                BucketName = userData.BucketName,
+                                Key = file.Url + file.Name
+                            };
+                            AWSClient.DeleteObject(deleteRequest);
+                            file.IsArchived = true;
+                            _writeOnlyRepository.Update(userData);
+                        }
+                    }
+
+                    folderToDelete.IsArchived = true;
+                    var deleteRequest2 = new DeleteObjectRequest
+                    {
+                        BucketName = userData.BucketName,
+                        Key = folderToDelete.Url + folderToDelete.Name + "/"
+                    };
+                    AWSClient.DeleteObject(deleteRequest2);
+                    _writeOnlyRepository.Update(userData);
+            //}
+            
+
         }
         
         public ActionResult ListFolderContent(string folderName)
         {
-            Session["ActualPath"] += "/" + folderName;
+            Session["ActualPath"] += folderName + "/";
             Session["ActualFolder"] = folderName;
             return RedirectToAction("ListAllContent");
         }
 
         public ActionResult ListAllContentRoot()
         {
-            Session["ActualPath"] = User.Identity.Name;
-            Session["ActualFolder"] = User.Identity.Name;
+            Session["ActualPath"] = string.Empty;
+            Session["ActualFolder"] = string.Empty;
             return RedirectToAction("ListAllContent");
         }
 
         public ActionResult DownloadFile(int fileId)
         {
-            var fileData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name).Files.FirstOrDefault(f => f.Id == fileId);
-            
-            var template_file = System.IO.File.ReadAllBytes(fileData.Url+"/"+fileData.Name);
-        
-            return new FileContentResult(template_file, fileData.Type){
+            var userData =_readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
+            var fileData = userData.Files.FirstOrDefault(f => f.Id == fileId);
+
+            var objectRequest = new GetObjectRequest{BucketName =userData.BucketName,Key = fileData.Url+fileData.Name};
+            var file=AWSClient.GetObject(objectRequest);
+            var byteArray = new byte[file.ContentLength];
+            file.ResponseStream.Read(byteArray, 0,(int)file.ContentLength);
+            //var template_file = System.IO.File.ReadAllBytes();
+
+            return new FileContentResult(byteArray, fileData.Type)
+            {
             FileDownloadName = fileData.Name};
 
         }
