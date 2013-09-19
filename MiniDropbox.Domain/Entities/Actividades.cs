@@ -11,7 +11,8 @@ namespace MiniDropbox.Domain
         public virtual long Id { get; set; }
         public virtual bool IsArchived { get; set; }
         public virtual string Actividad { get; set; }
-       public virtual DateTime hora { get; set; }
+   
+        public virtual DateTime hora { get; set; }
     }
 }
 
