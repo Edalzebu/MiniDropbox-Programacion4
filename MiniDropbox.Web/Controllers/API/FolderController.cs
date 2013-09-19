@@ -45,14 +45,14 @@ namespace MiniDropbox.Web.Controllers.API
         }
 
         // POST api/folder
-        public string Post([FromBody]string currentPath, [FromUri] string token) // Funcion para devolver cierto folder
+        public string Post([FromUri]string Path, [FromUri] string token) // Funcion para devolver cierto folder
         {
             var account = CheckPermissions(token);
             var model = new FolderModel();
 
             if (CheckCuenta(account))
             {
-                model.listaModels = ListFolder(currentPath,account);
+                model.listaModels = ListFolder(Path,account);
                 return JsonConvert.SerializeObject(model);
             }
             return null;
