@@ -61,6 +61,19 @@ namespace MiniDropbox.Web.Controllers
             account.Password = EncriptacionMD5.Encriptar(model.Password);
             account.BucketName = string.Format("mdp.{0}", Guid.NewGuid());
 
+            //var account = new Account
+            //{
+            //    Name = accountModel.Name,
+            //    LastName = accountModel.LastName,
+            //    EMail = accountModel.EMail,
+            //    IsArchived = false,
+            //    IsBlocked = false,
+            //    SpaceLimit = 500,
+            //    UsedSpace = 0,
+            //    Password = EncriptacionMD5.Encriptar(accountModel.Password) 
+            //};
+            //account.AddRole(new Role{Name = "User",IsArchived = false});
+
            var createdAccount= _writeOnlyRepository.Create(account);
 
             var token = Convert.ToInt64(Session["userReferralId"]);
@@ -72,6 +85,8 @@ namespace MiniDropbox.Web.Controllers
                 _writeOnlyRepository.Update(userReferring);
             }
 
+            var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/" + account.EMail);
+            Directory.CreateDirectory(serverFolderPath);
             
             var newBucket = new PutBucketRequest { BucketName = account.BucketName };
             AWSClient.PutBucket(newBucket);
@@ -79,6 +94,8 @@ namespace MiniDropbox.Web.Controllers
             var putFolder = new PutObjectRequest{BucketName = account.BucketName, Key = "Shared/",ContentBody = string.Empty};
             AWSClient.PutObject(putFolder);
 
+            var sharedDirectory =serverFolderPath + "/Shared";
+            Directory.CreateDirectory(sharedDirectory);
             //var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/" + account.EMail);
             //Directory.CreateDirectory(serverFolderPath);
 
@@ -97,6 +114,7 @@ namespace MiniDropbox.Web.Controllers
                 IsArchived = false,
                 IsDirectory = true,
                 Name = "Shared",
+                Url = serverFolderPath,
                 Url = "",
                 Type = "",
                 ModifiedDate = DateTime.Now

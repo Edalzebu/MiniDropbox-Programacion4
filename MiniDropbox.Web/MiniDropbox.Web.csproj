@@ -216,6 +216,8 @@
     <Compile Include="Models\ChangePasswordModel.cs" />
     <Compile Include="Models\ChangeUserSpaceLimitModel.cs" />
     <Compile Include="Models\DiskContentModel.cs" />
+    <Compile Include="Models\FolderPublicoModel.cs" />
+    <Compile Include="Models\FolderPublicoModel2.cs" />
     <Compile Include="Models\HomeInputModel.cs" />
     <Compile Include="Models\FileSearchResult.cs" />
     <Compile Include="Models\PackageModel.cs" />
@@ -2307,6 +2309,10 @@
     <Content Include="Views\ChangePassword\ChangePassword.cshtml" />
     <Content Include="Views\Disk\FileUploadModal.cshtml" />
     <Content Include="Views\SearchResult\ListFileSearchResult.cshtml" />
+    <Content Include="Views\Disk\Shared.cshtml" />
+    <Content Include="Views\Disk\PublicFolder.cshtml" />
+    <Content Include="Views\Disk\SeePublicShare.cshtml" />
+    <Content Include="Views\shared\_BootstrapLayout.custumer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
