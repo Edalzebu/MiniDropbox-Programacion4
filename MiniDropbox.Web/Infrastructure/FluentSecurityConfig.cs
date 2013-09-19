@@ -7,6 +7,7 @@ using System.Web.Security;
 using BootstrapMvcSample.Controllers;
 using FluentSecurity;
 using MiniDropbox.Web.Controllers;
+using NHibernate.SqlCommand;
 
 namespace MiniDropbox.Web.Infrastructure
 {
@@ -34,6 +35,10 @@ namespace MiniDropbox.Web.Infrastructure
                 configuration.For<AccountSignUpController>().Ignore();
                 configuration.For<PasswordRecoveryController>().Ignore();
                 configuration.For<PasswordResetController>().Ignore();
+                configuration.For<AccountController>(x => x.Confirmed("")).Ignore();
+               
+           
+
                 //configuration.For<DiskController>().RequireRole(new object[] { "User" });
 
                 configuration.For<RegisteredUsersListController>().RequireRole(new object[] { "Admin" });

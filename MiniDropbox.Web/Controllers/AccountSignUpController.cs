@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Services.Description;
@@ -11,6 +12,7 @@ using BootstrapMvcSample.Controllers;
 using MiniDropbox.Domain;
 using MiniDropbox.Domain.Services;
 using MiniDropbox.Web.Models;
+using MiniDropbox.Web.Utils;
 using File = System.IO.File;
 
 
@@ -55,7 +57,8 @@ namespace MiniDropbox.Web.Controllers
             account.IsArchived = false;
             account.IsAdmin = false;
             account.IsBlocked = false;
-            account.SpaceLimit = 500;
+            account.SpaceLimit = 2408;
+            account.Isconfirmed = false;
             account.Password = EncriptacionMD5.Encriptar(model.Password);
 
             //var account = new Account
@@ -107,6 +110,34 @@ namespace MiniDropbox.Web.Controllers
             });
 
             _writeOnlyRepository.Update(createdAccount);
+
+            #region EnvioCorreoParaNotificacion
+
+            var fechaActual = DateTime.Now.Date;
+
+            var pass = result.FirstOrDefault().Password;
+            var data = "" + fechaActual.Day + fechaActual.Month + fechaActual.Year;
+            var tokenConfir = pass + ";" + EncriptacionMD5.Encriptar(data);
+
+            //var url = "http://minidropbox-1.apphb.com/PasswordReset/PasswordReset";
+            var url = "http://localhost:1840/Account/Confirmed";
+
+            var emailBody = new StringBuilder("<b>Confirm your account of MiniDropbox</b>");
+            emailBody.Append("<br/>");
+            emailBody.Append("<br/>");
+            emailBody.Append("<b>" + url + "?token=" + tokenConfir + "<b>");
+            emailBody.Append("<br/>");
+            emailBody.Append("<br/>");
+            emailBody.Append("<b>This link is only valid through " + DateTime.Now.Day + "/" + DateTime.Now.Month + "/" + DateTime.Now.Year + "</b>");
+
+            if (MailSender.SendEmail(model.EMail, "Confirm your account of MiniDropbox", emailBody.ToString()))
+                return Cancelar();
+
+            Error("E-Mail failed to be sent, please try again!!!");
+            return View(model);
+            #endregion
+
+
             return Cancelar();
         }
 

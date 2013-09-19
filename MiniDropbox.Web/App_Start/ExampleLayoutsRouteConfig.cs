@@ -24,11 +24,13 @@ namespace BootstrapMvcSample
             routes.MapNavigationRoute<ExampleLayoutsController>("Options", c => c.Starter())
                 .AddChildRoute<AccountProfileController>("View Profile", c => c.Profile())
                 .AddChildRoute<DiskController>("My Files", c => c.ListAllContentRoot())
-                .AddChildRoute<ChangePasswordController>("Change Password",p=>p.ChangePassword())
+                .AddChildRoute<ChangePasswordController>("Change Password", p => p.ChangePassword())
                 .AddChildRoute<ReferralInviteController>("Refer a friend", c => c.ReferralInvite())
-                .AddChildRoute<AccountController>("Log Out",a=>a.LogOut());
+                .AddChildRoute<PackageListController>("Buy more space", c => c.Marketing())
+                .AddChildRoute<PackageListController>("Purchases", c => c.RecibosVentas())
+                .AddChildRoute<AccountController>("Log Out", a => a.LogOut());
 
-            
+
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -9,6 +10,10 @@ namespace MiniDropbox.Web.Models
         {
             public string Name { get; set; }
             public string LastName { get; set; }
+            [Editable(false)]
+            public int SpaceLimit { get; set; }
+             [Editable(false)]
+            public int UsedSpace { get; set; }
             //public string Password{ get; set; }
             //public string EMail { get; set; }
             

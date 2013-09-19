@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using MiniDropbox.Domain.Entities;
 
 namespace MiniDropbox.Domain
 {
     public class Account : IEntity
     {
         public virtual long Id { get; set; }
+        public virtual long RecibosVentas_Id { get; set; }
         public virtual string Name { get; set; }
         public virtual string LastName { get; set; }
         public virtual string EMail { get; set; }
@@ -14,9 +16,12 @@ namespace MiniDropbox.Domain
         public virtual bool IsArchived { get; set; }
         public virtual bool IsBlocked { get; set; }
         public virtual bool IsAdmin { get; set; }
+        public virtual bool Isconfirmed { get; set; }
+
 
         public virtual IList<File> Files { get; set; }
         public virtual IList<Account> Referrals { get; set; }
+        public virtual IList<RecibosVentas> RecibosVentas { get; set; }
 
     }
 }

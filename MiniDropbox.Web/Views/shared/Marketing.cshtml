@@ -1,0 +1,53 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Purchase";
+    Layout = "~/Views/shared/_BootstrapLayout.basic.cshtml";
+}
+
+     <!-- Main hero unit for a primary marketing message or call to action -->
+      <!-- div class="hero-unit">
+          <h1>Welcome</h1>
+        <p>Selecciona tu plan MiniDropbox Pro</p>
+      </!-->
+
+      <!-- Example row of columns -->
+<div class="row">
+    <div class="span4">
+        <h2>FREE 2 GB</h2>
+        <p> </p>
+        <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/Free.png" title=""/> </td>
+        <p> </p>
+        <p>Currently You acquired your Free that is limited to</p>
+    </div>
+    <div class="span4">
+        <h2>200 GB</h2>
+        <p> </p>
+        <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/200.png" title=""/> </td>
+        <p> </p>
+        <p>US$ 30.</p>
+        <p> </p>
+        <p>Enough room for all your high resolution images, and more... </p>
+        <p><form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="GNMAM7S79SBKU">
+            <input type="image" src="https://www.sandbox.paypal.com/es_XC/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal, la forma más segura y rápida de pagar en línea.">
+            <img alt="" border="0" src="https://www.sandbox.paypal.com/es_XC/i/scr/pixel.gif" width="1" height="1">
+            </form>
+        </p>
+    </div>
+    <div class="span4">
+        <h2>500 GB</h2>
+        <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/500.png" title=""/> </td>
+        <p>US$ 100.</p>
+        <p>Plenty of room for your home videos and other large files.</p>
+        <p>
+            <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                <input type="hidden" name="cmd" value="_s-xclick">
+                <input type="hidden" name="hosted_button_id" value="AW8YBFVNZQZTE">
+                <input type="image" src="https://www.sandbox.paypal.com/es_XC/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal, la forma más segura y rápida de pagar en línea.">
+                <img alt="" border="0" src="https://www.sandbox.paypal.com/es_XC/i/scr/pixel.gif" width="1" height="1">
+            </form>
+        </p>
+    </div>
+</div>
