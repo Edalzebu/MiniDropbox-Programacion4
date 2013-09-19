@@ -36,7 +36,7 @@ namespace MiniDropbox.Web.Utils
                     smtp.Send(mailMessage);
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return false;
                 }

@@ -32,10 +32,19 @@ namespace MiniDropbox.Web.Infrastructure
 
             Mapper.CreateMap<Package,CreateEditPackageController>();
             Mapper.CreateMap<CreateEditPackageController, Package>();
+<<<<<<< HEAD
 
             Mapper.CreateMap<File, FileSearchResult>();
             Mapper.CreateMap<FileSearchResult, File>();
 
+=======
+            
+            Mapper.CreateMap<File, FileSearchResult>();
+            Mapper.CreateMap<FileSearchResult, File>();
+
+            Mapper.CreateMap<Actividades, ActividadesModel>().ForMember(x=>x.Actividad,y=>y.MapFrom(o=>o.Actividad)).ForMember(x=>x.Hora,y=>y.MapFrom(o=>o.hora));
+            Mapper.CreateMap<ActividadesModel, Actividades>();
+>>>>>>> Mostrar_Multimedia
         }
     }
 }
