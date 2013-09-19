@@ -162,8 +162,9 @@ namespace MiniDropbox.Web.Controllers
 
             AWSClient.PutObject(putObjectRequest);
 
-            Success("File uploaded successfully!!! :D");
-            return RedirectToAction("ListAllContent");
+
+            return true;
+            
         }
 
         public ActionResult DeleteFile(int fileId)

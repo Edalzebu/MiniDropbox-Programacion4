@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
+using Amazon;
+using Amazon.S3;
 using Newtonsoft.Json;
 using Amazon.S3.Model;
 using AutoMapper;
@@ -17,6 +19,7 @@ using MiniDropbox.Web.Models;
 using MiniDropbox.Web.Models.Api;
 using MiniDropbox.Domain.Services;
 using File = MiniDropbox.Domain.File;
+using BootstrapMvcSample.Controllers;
 
 namespace MiniDropbox.Web.Controllers.API
 {
@@ -24,9 +27,11 @@ namespace MiniDropbox.Web.Controllers.API
     {
         private readonly IReadOnlyRepository _readOnlyRepository;
         private readonly IWriteOnlyRepository _writeOnlyRepository;
+        public readonly AmazonS3 AWSClient = AWSClientFactory.CreateAmazonS3Client();
 
         public FilesController(IReadOnlyRepository readOnlyRepository, IWriteOnlyRepository writeOnlyRepository)
         {
+
             _readOnlyRepository = readOnlyRepository;
             _writeOnlyRepository = writeOnlyRepository;
         }
@@ -112,7 +117,7 @@ namespace MiniDropbox.Web.Controllers.API
             
             HttpResponseMessage response = new HttpResponseMessage();
             response.StatusCode = HttpStatusCode.OK;
-            response.Content = new StreamContent(file);
+            response.Content = new StreamContent(file.ResponseStream);
             return response;
         }
 

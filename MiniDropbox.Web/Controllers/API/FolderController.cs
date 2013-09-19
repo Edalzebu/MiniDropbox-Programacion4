@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using Amazon;
 using Amazon.S3.Model;
 using Amazon.S3;
 using Newtonsoft.Json;
@@ -20,6 +21,7 @@ namespace MiniDropbox.Web.Controllers.API
     {
         private readonly IReadOnlyRepository _readOnlyRepository;
         private readonly IWriteOnlyRepository _writeOnlyRepository;
+        public readonly AmazonS3 AWSClient = AWSClientFactory.CreateAmazonS3Client();
 
         public FolderController(IReadOnlyRepository readOnlyRepository, IWriteOnlyRepository writeOnlyRepository)
         {
@@ -74,7 +76,7 @@ namespace MiniDropbox.Web.Controllers.API
         }
 
         // DELETE api/folder/5
-        public string Delete([FromUri] string token , [FromUri]int id) // Borra un folder, y te retorna el root folder
+        public bool Delete([FromUri] string token , [FromUri]int id) // Borra un folder, y te retorna el root folder
         {
             var account = CheckPermissions(token);
             if (CheckCuenta(account))
@@ -86,9 +88,10 @@ namespace MiniDropbox.Web.Controllers.API
                     _writeOnlyRepository.Update(folder);
                     var model = new FolderModel();
                     model.listaModels = ListRootFolder(account);
+                    return true;
                 }
             }
-            
+            return false;
         }
 
 
