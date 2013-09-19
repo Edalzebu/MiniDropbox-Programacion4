@@ -1,4 +1,5 @@
 ﻿@using BootstrapSupport
+@using Microsoft.Web.Mvc
 @model List<MiniDropbox.Web.Models.DiskContentModel>
 
 @{
@@ -8,7 +9,7 @@
 
 <script type="text/javascript">
     function showModal() {
-            
+
         var url = $('#FileUploadPopUp').data('url');
 
         $.get(url, function (data) {
@@ -18,18 +19,41 @@
             $('#FileUploadPopUp').modal('toggle');
         });
     }
-       
+
+    function showModalshared() {
+
+        var url = $('#FileSharedPopup').data('url');
+
+        $.get(url, function (data) {
+            $('#FileSharedPopup').html(data);
+
+            //$('#gameModal').modal('show');
+            $('#FileSharedPopup').modal('toggle');
+        });
+    }
+    
+    function showModalPublicFolder() {
+
+        var url = $('#FilePublicFolderPopup').data('url');
+
+        $.get(url, function (data) {
+            $('#FilePublicFolderPopup').html(data);
+
+            //$('#gameModal').modal('show');
+            $('#FilePublicFolderPopup').modal('toggle');
+        });
+    }
+
     function showNewFolderModal() {
         $('#createFolderModal').modal('toggle');
         $('#folderName').val();
     }
-    
+
     function showFileDeleteMessage(fileId) {
         $('#FileDeleteMessage').modal('toggle');
     }
-    
-    function Search()
-    {
+
+    function Search() {
         var searchText = document.getElementById('searchTerm').value;
         var targetTable = document.getElementById('dataTable');
         var targetTableColCount;
@@ -57,7 +81,7 @@
                 targetTable.rows.item(rowIndex).style.display = 'table-row';
         }
     }
-       
+
 </script>
 <div class="pull-right" style="padding-left: 10px">
         @using (@Html.BeginForm("ListFileSearchResult", "SearchResult"))
@@ -68,8 +92,17 @@
 </div>
 <div class="pull-right" style="vertical-align: central">
     <a class="icon-upload " onclick="showModal();" href="#" title="Upload File"  style="padding-left: 10px"></a>
-    <a class="icon-folder-open" onclick="showNewFolderModal();" href="#" title="New Folder"  style="padding-left: 10px"></a>
+    <a class="icon-folder-open" onclick="showNewFolderModal();" href="#" title="New Folder"  style="padding-left: 10px"></a>                            
 </div>
+
+<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="GNMAM7S79SBKU">
+<input type="image" src="https://www.sandbox.paypal.com/es_XC/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal, la forma más segura y rápida de pagar en línea.">
+<img alt="" border="0" src="https://www.sandbox.paypal.com/es_XC/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+
 
 
 <h2 style="text-align: center">Files List</h2>
@@ -81,21 +114,36 @@
             <td></td>
             @foreach (var property in Model[0].VisibleProperties())
             {
-                <th>
-                    @property.GetLabel().ToSeparatedWords()
-                </th>
+                if (property.Name != "IsShared")
+                {
+                    <th>
+                        @property.GetLabel().ToSeparatedWords()
+                    </th>
+                }
             }
             <th></th>
         </tr>
     </thead>
-    @{ int index = 0; }
+    @{ int index = 0;
+        object routes; }
+    
+    @{
+        RouteValueDictionary routevalues=new RouteValueDictionary();
+    }
     @foreach (var model in Model)
     {
         ViewData[index.ToString()] = model;
         <tr>
             @if (string.IsNullOrEmpty(model.Type))
             {
-                <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/folder.png" title=""/> </td>
+                if (!model.IsShared)
+                {
+                    <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/folder.png" title=""/> </td>
+                }
+                else
+                {
+                    <td style = "text-align: center; width: 32px" ><img src = "~/Content/images/Icons/folder_heart.png"title = "" /> </td>
+                }
             }
             else if (model.Type.Contains("jpeg"))
             {
@@ -103,7 +151,7 @@
             }
             else if (model.Type.Contains("png"))
             {
-                 <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/file_extension_png.png" title=""/></td>
+                <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/file_extension_png.png" title=""/></td>
             }
             else
             {
@@ -112,16 +160,19 @@
 
             @foreach (var property in model.VisibleProperties())
             {
-                <td>
-                    @if (property.Name == "Name" && string.IsNullOrEmpty(model.Type))
-                    {
-                        @Html.ActionLink("" + @Html.Display(index + "." + property.Name), "ListFolderContent", new { @folderName = model.Name }, new { @class = "btn-link" })
-                    }
-                    else
-                    {
-                         @Html.Display(index + "." + property.Name)
-                    }
-                </td>                    
+                if (property.Name != "IsShared")
+                {
+                    <td>
+                        @if (property.Name == "Name" && string.IsNullOrEmpty(model.Type))
+                        {
+                            @Html.ActionLink("" + @Html.Display(index + "." + property.Name), "ListFolderContent", new {@folderName = model.Name}, new {@class = "btn-link"})
+                        }
+                        else
+                        {
+                            @Html.Display(index + "." + property.Name)
+                        }
+                    </td>
+                }
             }
             <td>
                 <div class="btn-group ">
@@ -131,24 +182,42 @@
                     </a>
                     <ul class="dropdown-menu">
                         @{
-                            @Html.TryPartial("_actions", model)                            
-                            var routevalues = model.GetIdValue();
+                            @Html.TryPartial("_actions", model)
+                            routevalues = model.GetIdValue();
+
+
+                            if (string.IsNullOrEmpty(model.Type))
+                            {
+                                if (!model.IsShared)
+                                {
+                                    <label class="controls-row">   public folder: <a class="icon-folder-open" onclick=" showModalPublicFolder(); " href="#" title="File Shared" style="padding-left: 10px"></a>
+                                    </label>
+                                }
+                            }
 
                             if (!string.IsNullOrEmpty(model.Type))
                             {
-                                <li>@Html.ActionLink("Download", "DownloadFile", new {@fileId=routevalues.Values.FirstOrDefault()})</li>
+                                <li>@Html.ActionLink("Download", "DownloadFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
                             }
-                                
+
                             @*<li class="divider"></li>*@
-                            <li>@Html.ActionLink("Delete", "DeleteFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
-                               
+                            if (model.Name != "Shared" && !model.IsShared)
+                            {
+                                <label class="controls-row">   Shared: <a class="icon-share" onclick=" showModalshared(); " href="#" title="File Shared" style="padding-left: 10px"></a>
+                                </label>
+                                <li>@Html.ActionLink("Delete", "DeleteFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
+                            }
+                            else if (model.IsShared)
+                            {
+                                <li>@Html.ActionLink("Stop Shared", "Stopshared", new { @id = routevalues.Values.FirstOrDefault() })</li>
+                            }
                         }
                     </ul>
                 </div>
 
             </td>
         </tr>
-            index++;
+                            index++;
     }
 
 </table>
@@ -156,6 +225,13 @@
 <div class="modal hide fade in modal-form" id="FileUploadPopUp"  data-url='@Url.Action("FileUploadModal", "Disk")'>
     
 </div>
+                             
+<div class="modal hide fade in modal-form" id="FileSharedPopup"  data-url='@Url.Action("Shared", "Disk", new { @fileId = routevalues.Values.FirstOrDefault() })'>
+</div>
+      
+                       
+<div class="modal hide fade in modal-form" id="FilePublicFolderPopup"  data-url='@Url.Action("PublicFolder", "Disk", new { @fileId = routevalues.Values.FirstOrDefault() })'>
+</div>                                                       
 
 <div class="modal hide fade in modal-form" id="FileDeleteMessage">
     <img class="badge-warning"/>

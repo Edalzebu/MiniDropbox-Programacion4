@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MiniDropbox.Web.Models
 {
@@ -8,5 +9,7 @@ namespace MiniDropbox.Web.Models
         public string Name { get; set; }
         public string Type { get; set; }
         public DateTime ModifiedDate { get; set; }
+        [Display(AutoGenerateField = false)]
+        public bool IsShared { get; set; }
     }
 }

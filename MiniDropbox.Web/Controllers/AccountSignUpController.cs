@@ -21,29 +21,29 @@ namespace MiniDropbox.Web.Controllers
         private readonly IReadOnlyRepository _readOnlyRepository;
         private readonly IWriteOnlyRepository _writeOnlyRepository;
 
-        public AccountSignUpController( IWriteOnlyRepository writeOnlyRepository, IReadOnlyRepository readOnlyRepository)
+        public AccountSignUpController(IWriteOnlyRepository writeOnlyRepository, IReadOnlyRepository readOnlyRepository)
         {
             _readOnlyRepository = readOnlyRepository;
             _writeOnlyRepository = writeOnlyRepository;
         }
-        
+
         [HttpGet]
         public ActionResult AccountSignUp(long token)
         {
             Session["userReferralId"] = token;
-            
+
             return View(new AccountSignUpModel());
         }
-       
+
         public ActionResult Cancelar()
         {
-            return RedirectToAction("LogIn","Account");
+            return RedirectToAction("LogIn", "Account");
         }
 
         [HttpPost]
         public ActionResult AccountSignUp(AccountSignUpModel model)
         {
-            var result = _readOnlyRepository.Query<Account>(a=>a.EMail==model.EMail);
+            var result = _readOnlyRepository.Query<Account>(a => a.EMail == model.EMail);
 
             if (result.Any())
             {
@@ -71,7 +71,7 @@ namespace MiniDropbox.Web.Controllers
             //};
             //account.AddRole(new Role{Name = "User",IsArchived = false});
 
-           var createdAccount= _writeOnlyRepository.Create(account);
+            var createdAccount = _writeOnlyRepository.Create(account);
 
             var token = Convert.ToInt64(Session["userReferralId"]);
 
@@ -85,12 +85,12 @@ namespace MiniDropbox.Web.Controllers
             var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/" + account.EMail);
             Directory.CreateDirectory(serverFolderPath);
 
-            var sharedDirectory =serverFolderPath + "/Shared";
+            var sharedDirectory = serverFolderPath + "/Shared";
             Directory.CreateDirectory(sharedDirectory);
 
             if (createdAccount.Files == null)
             {
-                createdAccount.Files= new List<Domain.File>();
+                createdAccount.Files = new List<Domain.File>();
             }
 
             createdAccount.Files.Add(new Domain.File
@@ -99,6 +99,7 @@ namespace MiniDropbox.Web.Controllers
                 FileSize = 0,
                 IsArchived = false,
                 IsDirectory = true,
+                IsShared = false,
                 Name = "Shared",
                 Url = serverFolderPath,
                 Type = "",
