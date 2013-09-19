@@ -1,0 +1,62 @@
+﻿@using BootstrapSupport
+@using NHibernate.Criterion
+@using MiniDropbox.Web.Models
+@model List<MiniDropbox.Web.Models.ActividadesModel>
+
+@{
+    ViewBag.Title = "Actividades";
+    Layout = "~/Views/shared/_BootstrapLayout.basic.cshtml";
+}
+@Html.ActionLink("Volver", "Volver", "Bitacora", new { @class = "btn btn-large btn-primary" });
+
+
+<h4>@Model.GetLabel() <small>Listing</small></h4>
+<table class="table table-striped">
+    <caption></caption>
+    <thead>
+        <tr>
+            @foreach (var property in Model[0].VisibleProperties())
+                 {
+                     <th>
+                    
+                         @property.GetLabel().ToSeparatedWords()
+                     </th>
+                 }
+            
+            <th></th>
+        </tr>
+    </thead>
+    @{ int index = 0; }
+    @foreach (var model in Model)
+    {
+        ViewData[index.ToString()] = model;
+        <tr>
+            @foreach (var property in model.VisibleProperties())
+            {
+                <td>
+                   
+                       @Html.Display(index + "." + property.Name);
+                    
+                   
+                </td>                    
+            }
+            <td>
+                <div class="btn-group">
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        Action
+                        <span class="caret"></span>
+                    </a>
+                   
+                </div>
+
+            </td>
+        </tr>
+            index++;
+    }
+
+</table>
+<p>
+    
+    </p>
+
+
