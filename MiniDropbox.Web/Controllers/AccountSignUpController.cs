@@ -114,7 +114,6 @@ namespace MiniDropbox.Web.Controllers
                 IsArchived = false,
                 IsDirectory = true,
                 Name = "Shared",
-                Url = serverFolderPath,
                 Url = "",
                 Type = "",
                 ModifiedDate = DateTime.Now
