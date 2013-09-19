@@ -182,6 +182,7 @@
     <Compile Include="Controllers\API\AuthController.cs" />
     <Compile Include="Controllers\API\FilesController.cs" />
     <Compile Include="Controllers\API\FolderController.cs" />
+    <Compile Include="Controllers\BitacoraController.cs" />
     <Compile Include="Controllers\BootstrapBaseController.cs" />
     <Compile Include="Controllers\ChangePasswordController.cs" />
     <Compile Include="Controllers\ChangeUserSpaceLimitController.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="Models\AccountLoginModel.cs" />
     <Compile Include="Models\AccountProfileModel.cs" />
     <Compile Include="Models\AccountSignUpModel.cs" />
+    <Compile Include="Models\ActividadesModel.cs" />
     <Compile Include="Models\Api\AuthenticationModel.cs" />
     <Compile Include="Models\Api\CreateFolderModel.cs" />
     <Compile Include="Models\Api\DeleteFolderModel.cs" />
