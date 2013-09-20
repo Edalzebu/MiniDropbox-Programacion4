@@ -30,7 +30,7 @@ namespace MiniDropbox.Web.Controllers.API
         }
 
         // GET api/folder
-        public string Get([FromUri] string token)
+        public FolderModel Get([FromUri] string token)
         {
             var account = CheckPermissions(token);
            var model = new FolderModel();
@@ -38,14 +38,15 @@ namespace MiniDropbox.Web.Controllers.API
             if (CheckCuenta(account))
             {
                 model.listaModels = ListRootFolder(account);
+                return model;
             }
-            return JsonConvert.SerializeObject(model);
+            return null;
             
             
         }
 
         // POST api/folder
-        public string Post([FromUri]string Path, [FromUri] string token) // Funcion para devolver cierto folder
+        public FolderModel Post([FromUri]string Path, [FromUri] string token) // Funcion para devolver cierto folder
         {
             var account = CheckPermissions(token);
             var model = new FolderModel();
@@ -53,13 +54,13 @@ namespace MiniDropbox.Web.Controllers.API
             if (CheckCuenta(account))
             {
                 model.listaModels = ListFolder(Path,account);
-                return JsonConvert.SerializeObject(model);
+                return model;
             }
             return null;
         }
 
         // PUT api/folder/5
-        public string Put([FromBody] CreateFolderModel model, [FromUri] string token) // funcion para crear un folder, devuelve la listqa del directorio
+        public FolderModel Put([FromBody] CreateFolderModel model, [FromUri] string token) // funcion para crear un folder, devuelve la listqa del directorio
         {
             var account = CheckPermissions(token);
             if (CheckCuenta(account))
@@ -68,7 +69,7 @@ namespace MiniDropbox.Web.Controllers.API
                 {
                     var modelo = new FolderModel();
                     modelo.listaModels = ListRootFolder(account);
-                    return JsonConvert.SerializeObject(modelo);
+                    return modelo;
                 }
                 
             }

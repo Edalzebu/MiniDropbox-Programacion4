@@ -37,12 +37,12 @@ namespace MiniDropbox.Web.Controllers.API
         }
 
         // GET api/files/5
-        public string Get([FromUri]int Id, [FromUri]string token)
+        public HttpResponseMessage Get([FromUri]int Id, [FromUri]string token)
         {
             var account = CheckPermissions(token);
             if (CheckCuenta(account))
             {
-                return JsonConvert.SerializeObject(DownloadFile(Id, account)); // HttpResponnsemessage
+                return DownloadFile(Id, account); // HttpResponnsemessage
                 //Mandar el File con ese ID si le pertenece
             }
             return null;
