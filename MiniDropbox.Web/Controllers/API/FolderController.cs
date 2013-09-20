@@ -46,7 +46,7 @@ namespace MiniDropbox.Web.Controllers.API
         }
 
         // POST api/folder
-        public FolderModel Post([FromUri]string Path, [FromUri] string token) // Funcion para devolver cierto folder
+        public FolderModel Get([FromUri]string Path, [FromUri] string token) // Funcion para devolver cierto folder
         {
             var account = CheckPermissions(token);
             var model = new FolderModel();
