@@ -2324,6 +2324,7 @@
     <Content Include="Views\PackageList\Succes.cshtml" />
     <Content Include="Views\shared\Marketing.cshtml" />
     <Content Include="Views\Bitacora\Actividades.cshtml" />
+    <Content Include="Views\Bitacora\SearchActivity.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
