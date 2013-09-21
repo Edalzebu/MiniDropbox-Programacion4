@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -622,6 +623,36 @@ namespace MiniDropbox.Web.Controllers
             account.History.Add(act);
             _writeOnlyRepository.Update(account);
 
+        }
+
+        public ActionResult ShowFile(int id)
+        {
+            var ar = new MostrarArchivosModel();
+            ar.file = Download(id);
+            return PartialView(ar);
+        }
+        public FileResult Download(long id)
+        {
+            var userData = _readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
+            var fileData = userData.Files.FirstOrDefault(f => f.Id == id);
+
+            var objectRequest = new GetObjectRequest { BucketName = userData.BucketName, Key = fileData.Url + fileData.Name };
+            var file = AWSClient.GetObject(objectRequest);
+            var byteArray = new byte[file.ContentLength];
+            file.ResponseStream.Read(byteArray, 0, (int)file.ContentLength);
+            //var template_file = System.IO.File.ReadAllBytes();
+
+            var t =new FileContentResult(byteArray, fileData.Type)
+            {
+                FileDownloadName = fileData.Name
+            };
+            //-------------
+
+
+            var fileStream = file.ResponseStream;
+
+            // Assuming that the resume is an MS Word document...
+            return File(fileStream, fileData.Type);
         }
     }
 }

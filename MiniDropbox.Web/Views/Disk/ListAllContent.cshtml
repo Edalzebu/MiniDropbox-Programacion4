@@ -8,6 +8,15 @@
 }
 
 <script type="text/javascript">
+    
+    function showModal2(modalContainerId, modalBodyId, id) {
+        var url = $(modalContainerId).data('url');
+
+        $.get(url, { id: id }, function (data) {
+            $(modalBodyId).html(data);
+            $(modalContainerId).modal('show');
+        });
+    }
     function showModal() {
 
         var url = $('#FileUploadPopUp').data('url');
@@ -189,7 +198,9 @@
 
                             if (!string.IsNullOrEmpty(model.Type))
                             {
+                                var modelo = model;
                                 <li>@Html.ActionLink("Download", "DownloadFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
+                            <li><a href="#" data-toggle="modal" onclick="showModal2('#VerFileModalContainerID','#VerFileModalBodyID', @modelo.Id)" >Ver Archivo</a> </li>
                             }
 
                             @*<li class="divider"></li>*@
@@ -253,7 +264,9 @@
     </div>
 
 </div>
-
+<div id="VerFileModalContainerID" class="modal hide fade" data-url='@Url.Action("ShowFile", "Disk")'> 
+    <div id="VerFileModalBodyID"></div> 
+</div>
 @*data-url='@Url.Action("FileUploadModal")'*@
 
 @*new { enctype = "multipart/form-data" }*@
