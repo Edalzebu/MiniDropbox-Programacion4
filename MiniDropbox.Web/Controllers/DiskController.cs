@@ -41,27 +41,35 @@ namespace MiniDropbox.Web.Controllers
 
             var actualFolder = Session["ActualFolder"].ToString();
             if (actualFolder == "Shared")
-                userFiles = _readOnlyRepository.First<FileShared>(x => x.UserReceive == User.Identity.Name).Files;
+            {
+                var temp = _readOnlyRepository.First<FileShared>(x => x.UserReceive == User.Identity.Name);
+                if (temp != null)
+                    userFiles = temp.Files;
+            }
             else
                 userFiles = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name).Files;
 
             var userContent = new List<DiskContentModel>();
-
-            foreach (var file in userFiles)
+            if (userFiles != null)
             {
+                foreach (var file in userFiles)
+                {
 
-                if (file == null)
-					continue;
-                var fileFolderArray = file.Url.Split('/');
-                var fileFolder =fileFolderArray.Length>1?fileFolderArray[fileFolderArray.Length-2]:fileFolderArray.FirstOrDefault();
+                    if (file == null)
+                        continue;
+                    var fileFolderArray = file.Url.Split('/');
+                    var fileFolder = fileFolderArray.Length > 1
+                        ? fileFolderArray[fileFolderArray.Length - 2]
+                        : fileFolderArray.FirstOrDefault();
 
 
-                
 
-                if (!file.IsArchived && fileFolder.Equals(actualFolder) && !string.Equals(file.Name, actualFolder))
-                    userContent.Add(Mapper.Map<DiskContentModel>(file));
-                else if (!file.IsArchived && file.IsShared && actualFolder == "Shared")
-                    userContent.Add(Mapper.Map<DiskContentModel>(file));
+
+                    if (!file.IsArchived && fileFolder.Equals(actualFolder) && !string.Equals(file.Name, actualFolder))
+                        userContent.Add(Mapper.Map<DiskContentModel>(file));
+                    else if (!file.IsArchived && file.IsShared && actualFolder == "Shared")
+                        userContent.Add(Mapper.Map<DiskContentModel>(file));
+                }
             }
 
             if (userContent.Count == 0)

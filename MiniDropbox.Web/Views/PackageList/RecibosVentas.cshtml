@@ -14,12 +14,14 @@
     <caption></caption>
     <thead class="text-center">
         <tr>
-            @foreach (var property in Model[0].VisibleProperties())
+            @if(Model.Count>0){
+            foreach (var property in Model[0].VisibleProperties())
             {
-                <th>
-                        @property.GetLabel().ToSeparatedWords()
-                </th>
-            }
+    <th>
+        @property.GetLabel().ToSeparatedWords()
+    </th>       
+}
+}
             <th></th>
         </tr>
     </thead>

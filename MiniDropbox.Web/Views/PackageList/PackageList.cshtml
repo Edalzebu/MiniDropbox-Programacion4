@@ -1,7 +1,7 @@
 ﻿@using BootstrapSupport
 @using NHibernate.Criterion
 @model List<MiniDropbox.Web.Models.PackageModel>
-
+@*  *@
 @{
     ViewBag.Title = "Packages List";
     Layout = "~/Views/shared/_BootstrapLayout.basic.cshtml";
@@ -14,6 +14,7 @@
     <caption></caption>
     <thead class="text-center">
         <tr>
+             
             @foreach (var property in Model[0].VisibleProperties())
             {
                 <th>

@@ -133,7 +133,7 @@ namespace MiniDropbox.Web.Controllers
             var tokenConfir = pass + ";" + EncriptacionMD5.Encriptar(data);
 
             //var url = "http://minidropbox-1.apphb.com/PasswordReset/PasswordReset";
-            var url = "http://localhost:1840/Account/Confirmed";
+            var url = "http://minidropboxclase.apphb.com/Account/Confirmed";
 
             var emailBody = new StringBuilder("<b>Confirm your account of MiniDropbox</b>");
             emailBody.Append("<br/>");
