@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -6,9 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using Amazon.S3.Model;
 using AutoMapper;
 using BootstrapMvcSample.Controllers;
+using BootstrapSupport;
+using FizzWare.NBuilder;
+using FluentNHibernate.Testing.Values;
 using MiniDropbox.Domain;
 using MiniDropbox.Domain.Entities;
 using MiniDropbox.Domain.Services;
@@ -30,6 +35,7 @@ namespace MiniDropbox.Web.Controllers
             _writeOnlyRepository = writeOnlyRepository;
         }
 
+
         [HttpGet]
         public ActionResult ListAllContent()
         {
@@ -47,9 +53,9 @@ namespace MiniDropbox.Web.Controllers
 
             foreach (var file in userFiles)
             {
-                if (file == null)
-                    continue;
 
+                if (file == null)
+					continue;
                 var fileFolderArray = file.Url.Split('/');
                 var fileFolder =fileFolderArray.Length>1?fileFolderArray[fileFolderArray.Length-2]:fileFolderArray.FirstOrDefault();
 
