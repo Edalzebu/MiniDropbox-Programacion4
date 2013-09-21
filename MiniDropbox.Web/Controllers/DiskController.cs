@@ -109,7 +109,7 @@ namespace MiniDropbox.Web.Controllers
                 return RedirectToAction("ListAllContent");
             }
             fileUploader(fileControl,User.Identity.Name);
-
+            AddActivity("El usuario ha subido el siguiente archivo "+fileControl.FileName);
             Success("File uploaded successfully!!! :D");
             return RedirectToAction("ListAllContent");
         }
@@ -248,6 +248,7 @@ namespace MiniDropbox.Web.Controllers
                             Key = fileToDelete.Url + fileToDelete.Name+"/"
                         };
                         AWSClient.DeleteObject(deleteRequest);
+                    AddActivity("El usuario ha borrado el siguiente archivo "+fileToDelete.Name);
                 }
                 _writeOnlyRepository.Update(userData);
             }
@@ -276,6 +277,7 @@ namespace MiniDropbox.Web.Controllers
 
             var putFolder = new PutObjectRequest { BucketName = userData.BucketName, Key = actualPath+folderName+"/", ContentBody = string.Empty };
             AWSClient.PutObject(putFolder);
+            AddActivity("El usuario ha creado el folder "+folderName);
             //var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/" + actualPath + "/"+folderName);
 
             //var folderInfo = new DirectoryInfo(serverFolderPath);
@@ -351,6 +353,7 @@ namespace MiniDropbox.Web.Controllers
                                 Key = file.Url + file.Name
                             };
                             AWSClient.DeleteObject(deleteRequest);
+                            AddActivity("El usuario ha borrado el folder "+folderToDelete.Name);
                             file.IsArchived = true;
                             _writeOnlyRepository.Update(userData);
                         }
@@ -429,6 +432,7 @@ namespace MiniDropbox.Web.Controllers
                 file.FileShared_id = cfshared.Id;
                 file.IsShared = true;
                 _writeOnlyRepository.Update<File>(file);
+                AddActivity("El usuario ha compartido el siguiente archivo: "+file.Name);
             }
 
             #region Envio de Mail o Invitacion
@@ -608,6 +612,16 @@ namespace MiniDropbox.Web.Controllers
                 return RedirectToAction("Logout", "Account");
             }
             return View(userContent);
+        }
+        public void AddActivity(string actividad)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var act = new Actividades();
+            act.Actividad = actividad;
+            act.hora = DateTime.Now;
+            account.History.Add(act);
+            _writeOnlyRepository.Update(account);
+
         }
     }
 }

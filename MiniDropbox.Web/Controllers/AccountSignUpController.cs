@@ -121,7 +121,7 @@ namespace MiniDropbox.Web.Controllers
                 ModifiedDate = DateTime.Now
             });
             
-
+            AddActivity("El usuario se registro.");
             _writeOnlyRepository.Update(createdAccount);
 
             #region EnvioCorreoParaNotificacion
@@ -152,6 +152,16 @@ namespace MiniDropbox.Web.Controllers
 
 
             return Cancelar();
+        }
+        public void AddActivity(string actividad)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var act = new Actividades();
+            act.Actividad = actividad;
+            act.hora = DateTime.Now;
+            account.History.Add(act);
+            _writeOnlyRepository.Update(account);
+
         }
 
     }

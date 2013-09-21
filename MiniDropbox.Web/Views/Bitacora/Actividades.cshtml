@@ -7,10 +7,15 @@
     ViewBag.Title = "Actividades";
     Layout = "~/Views/shared/_BootstrapLayout.basic.cshtml";
 }
-@Html.ActionLink("Volver", "Volver", "Bitacora", new { @class = "btn btn-large btn-primary" });
+<div style="text-align: right">
+    @Html.ActionLink("Buscar", "SearchActivity","Bitacora", new {@class = "btn btn-small"})
+    @Html.ActionLink("Limpiar Historial","CleanActivity", "Bitacora", new {@class = "btn btn-small"})
+    @Html.ActionLink("Volver", "Volver", "Bitacora", new { @class = "btn btn-small btn-primary" })
+</div>
 
 
-<h4>@Model.GetLabel() <small>Listing</small></h4>
+
+<h4>Actividades</h4>
 <table class="table table-striped">
     <caption></caption>
     <thead>
@@ -35,21 +40,12 @@
             {
                 <td>
                    
-                       @Html.Display(index + "." + property.Name);
+                       @Html.Display(index + "." + property.Name)
                     
                    
                 </td>                    
             }
-            <td>
-                <div class="btn-group">
-                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                        Action
-                        <span class="caret"></span>
-                    </a>
-                   
-                </div>
-
-            </td>
+            
         </tr>
             index++;
     }

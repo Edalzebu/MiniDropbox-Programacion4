@@ -37,15 +37,20 @@ namespace MiniDropbox.Web.Controllers
         public ActionResult Actividades()
         {
             var cuenta = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var modelo = new List<ActividadesModel>();
             if (cuenta.History.Count != 0)
             {
-
-                return View(cuenta.History);
+                foreach (var Actividad in cuenta.History)
+                {
+                    modelo.Add(Mapper.Map<Actividades, ActividadesModel>(Actividad)); 
+                }
+                
+                return View(modelo);
             }
-            var actividad = new Actividades();
+            var actividad = new ActividadesModel();
             actividad.Actividad = "";
-
-            return View();
+            modelo.Add(actividad);
+            return View(modelo);
         }
 
         [HttpGet]
@@ -54,5 +59,15 @@ namespace MiniDropbox.Web.Controllers
             return RedirectToAction("ListAllContent", "Disk");
         }
 
+        public ActionResult CleanActivity()
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            if (account != null)
+            {
+                account.History.Clear();
+                _writeOnlyRepository.Update(account);
+            }
+            return RedirectToAction("Actividades");
+        }
     }
 }

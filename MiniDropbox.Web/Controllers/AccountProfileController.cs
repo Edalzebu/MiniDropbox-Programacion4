@@ -36,7 +36,7 @@ namespace MiniDropbox.Web.Controllers
 
             userData.Name = model.Name;
             userData.LastName = model.LastName;
-
+            AddActivity("[Cambio de nombre] Primer Nombre: "+model.Name+ " Apellido: "+model.LastName);
             _writeOnlyRepository.Update(userData);
 
             return RedirectToAction("ListAllContent", "Disk");
@@ -50,6 +50,17 @@ namespace MiniDropbox.Web.Controllers
         public ActionResult ChangePassword()
         {
             return RedirectToAction("ChangePassword", "ChangePassword");
+        }
+
+        public void AddActivity(string actividad)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var act = new Actividades();
+            act.Actividad = actividad;
+            act.hora = DateTime.Now;
+            account.History.Add(act);
+            _writeOnlyRepository.Update(account);
+
         }
     }
 }

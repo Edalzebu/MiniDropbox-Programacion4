@@ -92,10 +92,13 @@ namespace MiniDropbox.Web.Controllers
 
             if (PostPaypal(tx,item_number))
             {
+
                 Success("Pago Correcto, Disfrute de su paquete Premium..:=) ");
+                AddActivity("Se activo un paquete premium");
             }
             else
             {
+                AddActivity("Fallo en activarse el paquete premium, se activo cuenta gratis.");
                 Error("Pago no se realizo, se activo una cuenta free");
             }
             return RedirectToAction("ListAllContent", "Disk");
@@ -185,6 +188,16 @@ namespace MiniDropbox.Web.Controllers
         {
             var userContent = _readOnlyRepository.Query<RecibosVentas>(x => x.UserCompro == User.Identity.Name).ToList();
             return View(userContent);
+        }
+        public void AddActivity(string actividad)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var act = new Actividades();
+            act.Actividad = actividad;
+            act.hora = DateTime.Now;
+            account.History.Add(act);
+            _writeOnlyRepository.Update(account);
+
         }
 
     }

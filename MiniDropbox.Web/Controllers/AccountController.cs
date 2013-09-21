@@ -164,6 +164,7 @@ namespace MiniDropbox.Web.Controllers
                     Session["ActualFolder"] = result.EMail;
 
                     result.Isconfirmed = true;
+                    AddActivity("El usuario ha confirmado su cuenta.");
                     _writeOnlyRepository.Update<Account>(result);
 
                     Success("Your Account it is Confirmed");
@@ -173,6 +174,16 @@ namespace MiniDropbox.Web.Controllers
                 return RedirectToAction("Confirmed", new {token = "ErrorPostBack"});
             }
             return RedirectToAction("LogIn");
+        }
+        public void AddActivity(string actividad)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var act = new Actividades();
+            act.Actividad = actividad;
+            act.hora = DateTime.Now;
+            account.History.Add(act);
+            _writeOnlyRepository.Update(account);
+
         }
     }
 }

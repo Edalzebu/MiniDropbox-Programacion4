@@ -46,7 +46,7 @@ namespace MiniDropbox.Web.Controllers
 
             userData.Password = EncriptacionMD5.Encriptar(model.NewPassword);
             _writeOnlyRepository.Update(userData);
-
+            AddActivity("El usuario ha cambiado su contrasena");
             Success("Password changed successfully!!");
 
             ClearModel(model);
@@ -64,6 +64,16 @@ namespace MiniDropbox.Web.Controllers
         public ActionResult Cancel()
         {
             return RedirectToAction("Profile","AccountProfile");
+        }
+        public void AddActivity(string actividad)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var act = new Actividades();
+            act.Actividad = actividad;
+            act.hora = DateTime.Now;
+            account.History.Add(act);
+            _writeOnlyRepository.Update(account);
+
         }
     }
 }
