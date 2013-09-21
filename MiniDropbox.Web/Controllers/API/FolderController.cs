@@ -65,7 +65,7 @@ namespace MiniDropbox.Web.Controllers.API
             var account = CheckPermissions(token);
             if (CheckCuenta(account))
             {
-                if (CreateFolder(currentPath, folderName))
+                if (CreateFolder(currentPath, folderName,account))
                 {
                     var modelo = new FolderModel();
                     modelo.listaModels = ListFolder(currentPath,account);
@@ -99,14 +99,14 @@ namespace MiniDropbox.Web.Controllers.API
 
 
         // funciones Auxiliares
-        private bool CreateFolder(string path,string folderName)
+        private bool CreateFolder(string path,string folderName, Account cuenta)
         {
             if (folderName.Length > 25)
             {
                 return false;
             }
 
-            var userData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var userData = cuenta;
 
             if (userData.Files.Count(l => l.Name == folderName) > 0)
             {

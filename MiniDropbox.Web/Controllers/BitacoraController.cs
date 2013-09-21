@@ -69,5 +69,10 @@ namespace MiniDropbox.Web.Controllers
             }
             return RedirectToAction("Actividades");
         }
+
+        public ActionResult SearchActivity(string s)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
