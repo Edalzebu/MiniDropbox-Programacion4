@@ -26,6 +26,7 @@ namespace BootstrapMvcSample
                 .AddChildRoute<DiskController>("My Files", c => c.ListAllContentRoot())
                 .AddChildRoute<ChangePasswordController>("Change Password",p=>p.ChangePassword())
                 .AddChildRoute<ReferralInviteController>("Refer a friend", c => c.ReferralInvite())
+                .AddChildRoute<BitacoraController>("Activities",e=>e.Actividades())
                 .AddChildRoute<PackageListController>("Buy more space", c => c.Marketing())
                 .AddChildRoute<PackageListController>("Purchases", c => c.RecibosVentas())
                 .AddChildRoute<BitacoraController>("Activities",e=>e.Actividades())

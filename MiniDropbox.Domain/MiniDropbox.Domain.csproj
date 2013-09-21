@@ -40,10 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Account.cs" />
-
     <Compile Include="Entities\Actividades.cs" />
     <Compile Include="Entities\ApiKeys.cs" />
-
     <Compile Include="Entities\File.cs" />
     <Compile Include="Entities\FileShared.cs" />
     <Compile Include="Entities\IEntity.cs" />

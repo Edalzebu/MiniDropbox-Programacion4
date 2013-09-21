@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -7,13 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
+using Amazon.S3.Model;
 using Amazon.S3.Model;
 using AutoMapper;
 using BootstrapMvcSample.Controllers;
-using BootstrapSupport;
-using FizzWare.NBuilder;
-using FluentNHibernate.Testing.Values;
 using MiniDropbox.Domain;
 using MiniDropbox.Domain.Entities;
 using MiniDropbox.Domain.Services;
@@ -56,6 +52,10 @@ namespace MiniDropbox.Web.Controllers
 
                 if (file == null)
 					continue;
+                var fileFolderArray = file.Url.Split('/');
+                var fileFolder =fileFolderArray.Length>1?fileFolderArray[fileFolderArray.Length-2]:fileFolderArray.FirstOrDefault();
+
+
                 var fileFolderArray = file.Url.Split('/');
                 var fileFolder =fileFolderArray.Length>1?fileFolderArray[fileFolderArray.Length-2]:fileFolderArray.FirstOrDefault();
 
