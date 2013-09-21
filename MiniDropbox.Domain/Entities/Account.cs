@@ -20,8 +20,7 @@ namespace MiniDropbox.Domain
         public virtual bool IsAdmin { get; set; }
         public virtual IList<Actividades> History { get; set; }
         public virtual string BucketName { get; set; }
-        public virtual IList<Actividades> History { get; set; }
-        public virtual string BucketName { get; set; }
+        
         
 
         public virtual bool Isconfirmed { get; set; }

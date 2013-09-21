@@ -56,8 +56,7 @@ namespace MiniDropbox.Web.Controllers
                 var fileFolder =fileFolderArray.Length>1?fileFolderArray[fileFolderArray.Length-2]:fileFolderArray.FirstOrDefault();
 
 
-                var fileFolderArray = file.Url.Split('/');
-                var fileFolder =fileFolderArray.Length>1?fileFolderArray[fileFolderArray.Length-2]:fileFolderArray.FirstOrDefault();
+                
 
                 if (!file.IsArchived && fileFolder.Equals(actualFolder) && !string.Equals(file.Name, actualFolder))
                     userContent.Add(Mapper.Map<DiskContentModel>(file));
