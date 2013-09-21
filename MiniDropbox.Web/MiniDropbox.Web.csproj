@@ -2314,6 +2314,11 @@
     <Content Include="Views\Disk\PublicFolder.cshtml" />
     <Content Include="Views\Disk\SeePublicShare.cshtml" />
     <Content Include="Views\shared\_BootstrapLayout.custumer.cshtml" />
+    <Content Include="Views\PackageList\RecibosVentas.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\PackageList\Succes.cshtml" />
+    <Content Include="Views\shared\Marketing.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
