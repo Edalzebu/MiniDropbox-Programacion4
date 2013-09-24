@@ -37,6 +37,11 @@ namespace MiniDropbox.Web.Controllers
 
             if (result != null)
             {
+                if (!CheckPassword(result, passwordEncripted))
+                {
+                     Error("Contraseña invalida");
+                    return View();
+                }
                 if (result.IsBlocked)
                 {
                     Error(
@@ -109,24 +114,24 @@ namespace MiniDropbox.Web.Controllers
             var fechaActual = DateTime.Now.Date;
 
             var data = token.Split(';');
-            var password = data[0];
+            var id = data[0];
             var linkDate = data[1];
 
             var currentDate = "" + fechaActual.Day + fechaActual.Month + fechaActual.Year;
             var currentDateMd5 = EncriptacionMD5.Encriptar(currentDate);
 
-            var user = _readOnlyRepository.Query<Account>(a => a.Password == password);
+            var user = _readOnlyRepository.First<Account>(a => a.Id.ToString() == id);
             var model = new AccountLoginModel();
 
-            var firstOrDefault = user.FirstOrDefault();
-            if (firstOrDefault != null)
-                model.EMail = firstOrDefault.EMail;
+            
+            if (user != null)
+                model.EMail = user.EMail;
 
-            var orDefault = user.FirstOrDefault();
-            if (orDefault != null)
-                model.Password = orDefault.Password;
+           
+            if (user != null)
+                model.Password = user.Password;
 
-            if (linkDate == currentDateMd5 && user.Any())
+            if (linkDate == currentDateMd5 && user != null)
             {
 
                 var result =
@@ -184,6 +189,14 @@ namespace MiniDropbox.Web.Controllers
             account.History.Add(act);
             _writeOnlyRepository.Update(account);
 
+        }
+        public bool CheckPassword(Account cuenta, string loginPassword)
+        {
+            if (cuenta.Password != loginPassword)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

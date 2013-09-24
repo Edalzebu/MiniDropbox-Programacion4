@@ -1,4 +1,5 @@
-﻿@using BootstrapSupport
+﻿@using System.Activities.Expressions
+@using BootstrapSupport
 @model Object
 
 @{
@@ -18,18 +19,39 @@
             using(Html.ControlGroupFor(property.Name)){
                
                      @Html.Label(property.Name.ToSeparatedWords(), new {@class = "control-label"})
+                    
                 <div class="controls">
                     @Html.Editor(property.Name, new {@class = "input-small"})
+                     
                     @Html.ValidationMessage(property.Name, null, new {@class = "help-inline"})
                 </div>
+                 if (property.Name == "UsedSpace" || property.Name == "Espacio Usado") 
+                 {
+                     <br>
+        <div class="controls">
+            <div class="btn-group" data-toggle="buttons">
+                
+                <div class="btn-group" data-toggle="buttons-radio">
+                      <button type="button" class="btn" >MB</button>
+                      <button type="button" class="btn">GB</button>
+                </div>
+            </div>
+        </div>
+            
+            
+                       
+                  }
                 
             }
         }
         <div class="form-actions">
-            @Html.ActionLink("Change Password", "ChangePassword","AccountProfile",new { @class = "btn btn-inverse" })
+            
             <button type="submit" class="btn btn-primary">Update Profile</button>
             @*<button type="submit" class="btn btn-danger" >Cancel </button>*@
-            @Html.ActionLink("Back", "Cancel","AccountProfile",new { @class = "btn btn-danger" })
+            @Html.ActionLink("Change Password", "ChangePassword","AccountProfile",new { @class = "btn btn-inverse" })
+            @Html.ActionLink("Back", "Cancel","AccountProfile",new { @class = "btn" })
         </div>
     </fieldset>
 }
+
+

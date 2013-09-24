@@ -108,6 +108,10 @@ namespace MiniDropbox.Web.Controllers
             {
                 createdAccount.Files= new List<Domain.File>();
             }
+            if (createdAccount.History == null)
+            {
+                createdAccount.History= new List<Actividades>();
+            }
 
             createdAccount.Files.Add(new Domain.File
             {
@@ -119,16 +123,23 @@ namespace MiniDropbox.Web.Controllers
                 Url = "",
                 Type = "",
                 ModifiedDate = DateTime.Now
+
             });
-            
-            AddActivity("El usuario se registro.");
             _writeOnlyRepository.Update(createdAccount);
 
+
+
+
+
+            AddActivity("El usuario se registro.", createdAccount);
+
+
+            // ESTOOOOOOO
             #region EnvioCorreoParaNotificacion
 
             var fechaActual = DateTime.Now.Date;
 
-            var pass = result.FirstOrDefault().Password;
+            var pass = result.FirstOrDefault().Id;
             var data = "" + fechaActual.Day + fechaActual.Month + fechaActual.Year;
             var tokenConfir = pass + ";" + EncriptacionMD5.Encriptar(data);
 
@@ -163,6 +174,18 @@ namespace MiniDropbox.Web.Controllers
             _writeOnlyRepository.Update(account);
 
         }
+        public void AddActivity(string actividad, Account cuenta)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == cuenta.EMail);
+            var act = new Actividades();
+            act.Actividad = actividad;
+            act.hora = DateTime.Now;
+            account.History.Add(act);
+            _writeOnlyRepository.Update(account);
+
+        }
+
+       
 
     }
 }

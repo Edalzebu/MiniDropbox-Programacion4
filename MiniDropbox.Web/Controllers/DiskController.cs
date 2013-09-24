@@ -379,6 +379,16 @@ namespace MiniDropbox.Web.Controllers
             Session["ActualFolder"] = folderName;
             return RedirectToAction("ListAllContent");
         }
+        public ActionResult ListFolderContent2(string path, string folderName)
+        {
+            if (path == null)
+            {
+                path = "";
+            }
+            Session["ActualPath"] = path;
+            Session["ActualFolder"] = folderName;
+            return RedirectToAction("ListAllContent");
+        }
 
         public ActionResult ListAllContentRoot()
         {

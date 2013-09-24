@@ -107,7 +107,32 @@
 
 
 <h2 style="text-align: center">Files List</h2>
-<label class="text-info">@Session["ActualPath"].ToString()</label>
+@{
+    var splittedpath= new List<string>();
+    splittedpath.Clear();
+    var realpath = "";
+    splittedpath = Session["ActualPath"].ToString().Split('/').ToList();
+    splittedpath.Insert(0, "Root");
+    splittedpath.Remove("");
+    foreach (var minipath in splittedpath)
+    {
+        if (minipath != "Root")
+        {
+            realpath += minipath + "/";
+            @Html.ActionLink("/"+minipath, "ListFolderContent2", new
+            {
+                @folderName = minipath,
+                path = realpath
+            })
+            
+        }
+        else
+        {
+            
+            @Html.ActionLink("Root", "ListAllContentRoot")
+        }
+    } 
+}
 <table class="table table-striped">
     <caption></caption>
     <thead>
@@ -126,10 +151,10 @@
         </tr>
     </thead>
     @{ int index = 0;
-        object routes; }
+       object routes; }
     
     @{
-        RouteValueDictionary routevalues=new RouteValueDictionary();
+        RouteValueDictionary routevalues = new RouteValueDictionary();
     }
     @foreach (var model in Model)
     {
@@ -166,7 +191,7 @@
                     <td>
                         @if (property.Name == "Name" && string.IsNullOrEmpty(model.Type))
                         {
-                            @Html.ActionLink("" + @Html.Display(index + "." + property.Name), "ListFolderContent", new {@folderName = model.Name}, new {@class = "btn-link"})
+                            @Html.ActionLink("" + @Html.Display(index + "." + property.Name), "ListFolderContent", new { @folderName = model.Name }, new { @class = "btn-link" })
                         }
                         else
                         {
@@ -184,43 +209,43 @@
                     <ul class="dropdown-menu">
                         @{
                             @Html.TryPartial("_actions", model)
-                            routevalues = model.GetIdValue();
+            routevalues = model.GetIdValue();
 
 
-                            if (string.IsNullOrEmpty(model.Type))
-                            {
-                                if (!model.IsShared)
-                                {
+            if (string.IsNullOrEmpty(model.Type))
+            {
+                if (!model.IsShared)
+                {
                                     <label class="controls-row">   public folder: <a class="icon-folder-open" onclick=" showModalPublicFolder(); " href="#" title="File Shared" style="padding-left: 10px"></a>
                                     </label>
-                                }
-                            }
+                }
+            }
 
-                            if (!string.IsNullOrEmpty(model.Type))
-                            {
-                                var modelo = model;
+            if (!string.IsNullOrEmpty(model.Type))
+            {
+                var modelo = model;
                                 <li>@Html.ActionLink("Download", "DownloadFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
                             <li><a href="#" data-toggle="modal" onclick="showModal2('#VerFileModalContainerID','#VerFileModalBodyID', @modelo.Id)" >Ver Archivo</a> </li>
-                            }
+            }
 
                             @*<li class="divider"></li>*@
-                            if (model.Name != "Shared" && !model.IsShared)
-                            {
+            if (model.Name != "Shared" && !model.IsShared)
+            {
                                 <label class="controls-row">   Shared: <a class="icon-share" onclick=" showModalshared(); " href="#" title="File Shared" style="padding-left: 10px"></a>
                                 </label>
                                 <li>@Html.ActionLink("Delete", "DeleteFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
-                            }
-                            else if (model.IsShared)
-                            {
+            }
+            else if (model.IsShared)
+            {
                                 <li>@Html.ActionLink("Stop Shared", "Stopshared", new { @id = routevalues.Values.FirstOrDefault() })</li>
-                            }
+            }
                         }
                     </ul>
                 </div>
 
             </td>
         </tr>
-                            index++;
+            index++;
     }
 
 </table>
