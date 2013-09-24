@@ -14,10 +14,12 @@ namespace MiniDropbox.Web.Controllers
     public class PasswordRecoveryController : BootstrapBaseController
     {
         private readonly IReadOnlyRepository _readOnlyRepository;
+        private readonly IWriteOnlyRepository _writeOnlyRepository;
 
-        public PasswordRecoveryController(IReadOnlyRepository readOnlyRepository)
+        public PasswordRecoveryController(IReadOnlyRepository readOnlyRepository, IWriteOnlyRepository writeOnlyRepository)
         {
             _readOnlyRepository = readOnlyRepository;
+            _writeOnlyRepository = writeOnlyRepository;
         }
 
         [HttpGet]
@@ -55,6 +57,7 @@ namespace MiniDropbox.Web.Controllers
                 emailBody.Append("<br/>");
                 emailBody.Append("<b>This link is only valid through " + fechaActual.Day + "/" + fechaActual.Month + "/" + fechaActual.Year + "</b>");
 
+                AddActivity("Se ha hecho una peticion de recuperar contrasena");
                 if (MailSender.SendEmail(model.EMailAddress,"Password Recovery" ,emailBody.ToString()))
                     return Cancel();
                
@@ -65,6 +68,16 @@ namespace MiniDropbox.Web.Controllers
 
             Error("E-Mail address is not registered in this site!!!");
             return View(model);
+        }
+        public void AddActivity(string actividad)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var act = new Actividades();
+            act.Actividad = actividad;
+            act.hora = DateTime.Now;
+            account.History.Add(act);
+            _writeOnlyRepository.Update(account);
+
         }
     }
 }

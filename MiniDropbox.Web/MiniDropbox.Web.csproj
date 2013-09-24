@@ -221,6 +221,7 @@
     <Compile Include="Models\FolderPublicoModel2.cs" />
     <Compile Include="Models\HomeInputModel.cs" />
     <Compile Include="Models\FileSearchResult.cs" />
+    <Compile Include="Models\MostrarArchivosModel.cs" />
     <Compile Include="Models\PackageModel.cs" />
     <Compile Include="Models\PasswordRecoveryModel.cs" />
     <Compile Include="Models\PasswordResetModel.cs" />
@@ -248,8 +249,10 @@
     <Content Include="Content\images\dropbox-logo3.gif" />
     <Content Include="Content\images\glyphicons-halflings-white.png" />
     <Content Include="Content\images\glyphicons-halflings.png" />
+    <Content Include="Content\images\Icons\200.png" />
     <Content Include="Content\images\Icons\32_bit.png" />
     <Content Include="Content\images\Icons\3d_glasses.png" />
+    <Content Include="Content\images\Icons\500.png" />
     <Content Include="Content\images\Icons\64_bit.png" />
     <Content Include="Content\images\Icons\accept.png" />
     <Content Include="Content\images\Icons\accordion.png" />
@@ -1144,6 +1147,7 @@
     <Content Include="Content\images\Icons\folders.png" />
     <Content Include="Content\images\Icons\folders_explorer.png" />
     <Content Include="Content\images\Icons\folder_add.png" />
+    <Content Include="Content\images\Icons\folder_add.png.BASE.png" />
     <Content Include="Content\images\Icons\folder_bell.png" />
     <Content Include="Content\images\Icons\folder_brick.png" />
     <Content Include="Content\images\Icons\folder_bug.png" />
@@ -1180,6 +1184,7 @@
     <Content Include="Content\images\Icons\font_superscript.png" />
     <Content Include="Content\images\Icons\form.png" />
     <Content Include="Content\images\Icons\formheading.png" />
+    <Content Include="Content\images\Icons\free.png" />
     <Content Include="Content\images\Icons\ftp.png" />
     <Content Include="Content\images\Icons\gas.png" />
     <Content Include="Content\images\Icons\gcp.png" />
@@ -2314,6 +2319,14 @@
     <Content Include="Views\Disk\PublicFolder.cshtml" />
     <Content Include="Views\Disk\SeePublicShare.cshtml" />
     <Content Include="Views\shared\_BootstrapLayout.custumer.cshtml" />
+    <Content Include="Views\PackageList\RecibosVentas.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\PackageList\Succes.cshtml" />
+    <Content Include="Views\shared\Marketing.cshtml" />
+    <Content Include="Views\Bitacora\Actividades.cshtml" />
+    <Content Include="Views\Bitacora\SearchActivity.cshtml" />
+    <Content Include="Views\Disk\ShowFile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

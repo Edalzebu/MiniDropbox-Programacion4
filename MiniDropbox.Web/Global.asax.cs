@@ -21,6 +21,7 @@ using NHibernate.Context;
 using Ninject;
 using Ninject.Web.Common;
 
+
 namespace MiniDropbox.Web
 {
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
@@ -37,8 +38,9 @@ namespace MiniDropbox.Web
         //    BootstrapMvcSample.ExampleLayoutsRouteConfig.RegisterRoutes(RouteTable.Routes);
         //}
 
+        
         public static ISessionFactory SessionFactory = CreateSessionFactory();
-
+        
         public MvcApplication()
         {
             BeginRequest += MvcApplication_BeginRequest;
@@ -53,10 +55,13 @@ namespace MiniDropbox.Web
         private void MvcApplication_BeginRequest(object sender, EventArgs e)
         {
             CurrentSessionContext.Bind(SessionFactory.OpenSession());
+            
         }
 
         public static ISessionFactory CreateSessionFactory()
         {
+            
+            
             MsSqlConfiguration databaseConfiguration = MsSqlConfiguration.MsSql2008.ShowSql().
                                                                           ConnectionString(
                                                                               x =>

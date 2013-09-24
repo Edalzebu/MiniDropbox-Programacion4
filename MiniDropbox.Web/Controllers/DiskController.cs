@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Amazon.S3.Model;
 using Amazon.S3.Model;
 using AutoMapper;
 using BootstrapMvcSample.Controllers;
@@ -30,6 +32,7 @@ namespace MiniDropbox.Web.Controllers
             _writeOnlyRepository = writeOnlyRepository;
         }
 
+
         [HttpGet]
         public ActionResult ListAllContent()
         {
@@ -39,24 +42,35 @@ namespace MiniDropbox.Web.Controllers
 
             var actualFolder = Session["ActualFolder"].ToString();
             if (actualFolder == "Shared")
-                userFiles = _readOnlyRepository.First<FileShared>(x => x.UserReceive == User.Identity.Name).Files;
+            {
+                var temp = _readOnlyRepository.First<FileShared>(x => x.UserReceive == User.Identity.Name);
+                if (temp != null)
+                    userFiles = temp.Files;
+            }
             else
                 userFiles = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name).Files;
 
             var userContent = new List<DiskContentModel>();
-
-            foreach (var file in userFiles)
+            if (userFiles != null)
             {
-                if (file == null)
-                    continue;
+                foreach (var file in userFiles)
+                {
 
-                var fileFolderArray = file.Url.Split('/');
-                var fileFolder =fileFolderArray.Length>1?fileFolderArray[fileFolderArray.Length-2]:fileFolderArray.FirstOrDefault();
+                    if (file == null)
+                        continue;
+                    var fileFolderArray = file.Url.Split('/');
+                    var fileFolder = fileFolderArray.Length > 1
+                        ? fileFolderArray[fileFolderArray.Length - 2]
+                        : fileFolderArray.FirstOrDefault();
 
-                if (!file.IsArchived && fileFolder.Equals(actualFolder) && !string.Equals(file.Name, actualFolder))
-                    userContent.Add(Mapper.Map<DiskContentModel>(file));
-                else if (!file.IsArchived && file.IsShared && actualFolder == "Shared")
-                    userContent.Add(Mapper.Map<DiskContentModel>(file));
+
+
+
+                    if (!file.IsArchived && fileFolder.Equals(actualFolder) && !string.Equals(file.Name, actualFolder))
+                        userContent.Add(Mapper.Map<DiskContentModel>(file));
+                    else if (!file.IsArchived && file.IsShared && actualFolder == "Shared")
+                        userContent.Add(Mapper.Map<DiskContentModel>(file));
+                }
             }
 
             if (userContent.Count == 0)
@@ -96,7 +110,7 @@ namespace MiniDropbox.Web.Controllers
                 return RedirectToAction("ListAllContent");
             }
             fileUploader(fileControl,User.Identity.Name);
-
+            AddActivity("El usuario ha subido el siguiente archivo "+fileControl.FileName);
             Success("File uploaded successfully!!! :D");
             return RedirectToAction("ListAllContent");
         }
@@ -235,6 +249,7 @@ namespace MiniDropbox.Web.Controllers
                             Key = fileToDelete.Url + fileToDelete.Name+"/"
                         };
                         AWSClient.DeleteObject(deleteRequest);
+                    AddActivity("El usuario ha borrado el siguiente archivo "+fileToDelete.Name);
                 }
                 _writeOnlyRepository.Update(userData);
             }
@@ -263,6 +278,7 @@ namespace MiniDropbox.Web.Controllers
 
             var putFolder = new PutObjectRequest { BucketName = userData.BucketName, Key = actualPath+folderName+"/", ContentBody = string.Empty };
             AWSClient.PutObject(putFolder);
+            AddActivity("El usuario ha creado el folder "+folderName);
             //var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/" + actualPath + "/"+folderName);
 
             //var folderInfo = new DirectoryInfo(serverFolderPath);
@@ -338,6 +354,7 @@ namespace MiniDropbox.Web.Controllers
                                 Key = file.Url + file.Name
                             };
                             AWSClient.DeleteObject(deleteRequest);
+                            AddActivity("El usuario ha borrado el folder "+folderToDelete.Name);
                             file.IsArchived = true;
                             _writeOnlyRepository.Update(userData);
                         }
@@ -416,6 +433,7 @@ namespace MiniDropbox.Web.Controllers
                 file.FileShared_id = cfshared.Id;
                 file.IsShared = true;
                 _writeOnlyRepository.Update<File>(file);
+                AddActivity("El usuario ha compartido el siguiente archivo: "+file.Name);
             }
 
             #region Envio de Mail o Invitacion
@@ -595,6 +613,46 @@ namespace MiniDropbox.Web.Controllers
                 return RedirectToAction("Logout", "Account");
             }
             return View(userContent);
+        }
+        public void AddActivity(string actividad)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var act = new Actividades();
+            act.Actividad = actividad;
+            act.hora = DateTime.Now;
+            account.History.Add(act);
+            _writeOnlyRepository.Update(account);
+
+        }
+
+        public ActionResult ShowFile(int id)
+        {
+            var ar = new MostrarArchivosModel();
+            ar.file = Download(id);
+            return PartialView(ar);
+        }
+        public FileResult Download(long id)
+        {
+            var userData = _readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
+            var fileData = userData.Files.FirstOrDefault(f => f.Id == id);
+
+            var objectRequest = new GetObjectRequest { BucketName = userData.BucketName, Key = fileData.Url + fileData.Name };
+            var file = AWSClient.GetObject(objectRequest);
+            var byteArray = new byte[file.ContentLength];
+            file.ResponseStream.Read(byteArray, 0, (int)file.ContentLength);
+            //var template_file = System.IO.File.ReadAllBytes();
+
+            var t =new FileContentResult(byteArray, fileData.Type)
+            {
+                FileDownloadName = fileData.Name
+            };
+            //-------------
+
+
+            var fileStream = file.ResponseStream;
+
+            // Assuming that the resume is an MS Word document...
+            return File(fileStream, fileData.Type);
         }
     }
 }

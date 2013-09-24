@@ -54,11 +54,22 @@ namespace MiniDropbox.Web.Controllers
 
             if (MailSender.SendEmail(model.ReferalEmail,"Join Mini DropBox"  , emailBody.ToString()))
             {
+                AddActivity("Se ha mandado una invitacion a "+model.ReferalEmail);
                 Success("E-Mail sent successfully!!");
                 return View(model);
             }
             Error("E-Mail couldn't be sent!!!!");
             return View(model);
+        }
+        public void AddActivity(string actividad)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var act = new Actividades();
+            act.Actividad = actividad;
+            act.hora = DateTime.Now;
+            account.History.Add(act);
+            _writeOnlyRepository.Update(account);
+
         }
     }
 }

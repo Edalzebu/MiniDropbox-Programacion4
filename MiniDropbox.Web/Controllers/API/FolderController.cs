@@ -60,20 +60,20 @@ namespace MiniDropbox.Web.Controllers.API
         }
 
         // PUT api/folder/5
-        public FolderModel Put([FromBody] CreateFolderModel model, [FromUri] string token) // funcion para crear un folder, devuelve la listqa del directorio
+        public void Put([FromUri] string folderName,[FromUri] string currentPath, [FromUri] string token) // funcion para crear un folder, devuelve la listqa del directorio
         {
             var account = CheckPermissions(token);
             if (CheckCuenta(account))
             {
-                if (CreateFolder(model.currentPath, model.folderName))
+                if (CreateFolder(currentPath, folderName,account))
                 {
                     var modelo = new FolderModel();
-                    modelo.listaModels = ListRootFolder(account);
-                    return modelo;
+                    modelo.listaModels = ListFolder(currentPath,account);
+                    
                 }
                 
             }
-            return null;
+            
         }
 
         // DELETE api/folder/5
@@ -99,14 +99,14 @@ namespace MiniDropbox.Web.Controllers.API
 
 
         // funciones Auxiliares
-        private bool CreateFolder(string path,string folderName)
+        private bool CreateFolder(string path,string folderName, Account cuenta)
         {
             if (folderName.Length > 25)
             {
                 return false;
             }
 
-            var userData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var userData = cuenta;
 
             if (userData.Files.Count(l => l.Name == folderName) > 0)
             {
