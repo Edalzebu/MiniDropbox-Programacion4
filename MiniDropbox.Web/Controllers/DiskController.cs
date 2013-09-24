@@ -69,7 +69,7 @@ namespace MiniDropbox.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult FileUpload(HttpPostedFileBase fileControl)
+        public ActionResult FileUpload(HttpPostedFileBase fileControl, string clientDateTime)
         {
             if (fileControl == null)
             {
@@ -88,7 +88,7 @@ namespace MiniDropbox.Web.Controllers
             var userData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
             var actualPath = Session["ActualPath"].ToString();
             var fileName = Path.GetFileName(fileControl.FileName);
-
+            var clientDate = Convert.ToDateTime(clientDateTime);
             //var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/"+actualPath);
            
             //var directoryInfo = new DirectoryInfo(serverFolderPath);
@@ -122,7 +122,7 @@ namespace MiniDropbox.Web.Controllers
             if (userData.Files.Count(l=>l.Name==fileName && l.Url.EndsWith(actualPath) && !l.IsArchived)>0)//Actualizar Info Archivo
             {
                 var bddInfo = userData.Files.FirstOrDefault(f => f.Name == fileName);
-                bddInfo.ModifiedDate = DateTime.Now;
+                bddInfo.ModifiedDate = clientDate;
                 bddInfo.Type = fileControl.ContentType;
                 bddInfo.FileSize = fileSize;
                 _writeOnlyRepository.Update(bddInfo);
@@ -132,8 +132,8 @@ namespace MiniDropbox.Web.Controllers
                 userData.Files.Add(new File
                 {
                     Name = fileName,
-                    CreatedDate = DateTime.Now,
-                    ModifiedDate = DateTime.Now,
+                    CreatedDate = clientDate,
+                    ModifiedDate = clientDate,
                     FileSize = fileSize,
                     Type = fileControl.ContentType,
                     Url = actualPath,
