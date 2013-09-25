@@ -36,18 +36,18 @@ namespace MiniDropbox.Web.Controllers
         [HttpPost]
         public ActionResult PasswordRecovery(PasswordRecoveryModel model)
         {
-            var result = _readOnlyRepository.Query<Account>(a => a.EMail == model.EMailAddress);
+            var result = _readOnlyRepository.First<Account>(a => a.EMail == model.EMailAddress);
 
-            if (result.Any())
+            if (result != null)
             {
                 var fechaActual = DateTime.Now.Date;
 
-                var pass = result.FirstOrDefault().Password;
+                var pass = result.Password;
                 var data = ""+fechaActual.Day + fechaActual.Month + fechaActual.Year;
                 var token =pass+";"+ EncriptacionMD5.Encriptar(data);
 
                 //var url = "http://minidropbox-1.apphb.com/PasswordReset/PasswordReset";
-                var url = "http://localhost:1840/PasswordReset/PasswordReset";
+                var url = "http://minidropboxclase.apphb.com/PasswordReset/PasswordReset";
 
                 var emailBody = new StringBuilder("<b>Go to the following link to change your password: </b>");
                 emailBody.Append("<br/>");
@@ -57,7 +57,7 @@ namespace MiniDropbox.Web.Controllers
                 emailBody.Append("<br/>");
                 emailBody.Append("<b>This link is only valid through " + fechaActual.Day + "/" + fechaActual.Month + "/" + fechaActual.Year + "</b>");
 
-                AddActivity("Se ha hecho una peticion de recuperar contrasena");
+                AddActivity("Se ha hecho una peticion de recuperar contrasena",result);
                 if (MailSender.SendEmail(model.EMailAddress,"Password Recovery" ,emailBody.ToString()))
                     return Cancel();
                
@@ -72,6 +72,16 @@ namespace MiniDropbox.Web.Controllers
         public void AddActivity(string actividad)
         {
             var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var act = new Actividades();
+            act.Actividad = actividad;
+            act.hora = DateTime.Now;
+            account.History.Add(act);
+            _writeOnlyRepository.Update(account);
+
+        }
+        public void AddActivity(string actividad, Account cuenta)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == cuenta.EMail);
             var act = new Actividades();
             act.Actividad = actividad;
             act.hora = DateTime.Now;
