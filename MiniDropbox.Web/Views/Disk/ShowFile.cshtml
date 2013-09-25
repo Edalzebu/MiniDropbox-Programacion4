@@ -10,6 +10,8 @@
     <div  class="modal-body">
         <div style="text-align: center">
             
+            
+           
             @{
                 if (Model.file.ContentType == "mp4")
                 {
@@ -19,17 +21,20 @@
                         Your browser does not support the video tag.
                     </video>
                 }
-                if (Model.file.ContentType == "mp3")
+                if (Model.file.ContentType == "audio/mp3")
                 {
                     <audio controls>
-                      <source src="horse.ogg" type="audio/ogg">
-                      <source src="horse.mp3" type="audio/mpeg">
-                        Your browser does not support the audio element.
+                        <source src='@Url.Action("Download", "Disk", new{id=Model.id})' type="audio/mp3" />
+                        <p>Your browser does not support HTML 5 audio element</p>
                     </audio>
                 }
                 if (Model.file.ContentType == "txt")
                 {
                     <iframe src="demo_iframe.htm" name="iframe_a"></iframe>
+                }
+                if (Model.file.ContentType == "image/jpeg")
+                {
+                    <img id="showingImage" src='@Url.Action("Download","Disk", new{id = Model.id})'/>
                 }
             }
             

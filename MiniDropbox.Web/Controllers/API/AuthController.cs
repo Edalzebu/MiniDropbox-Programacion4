@@ -55,7 +55,7 @@ namespace MiniDropbox.Web.Controllers.API
             {
                 return CreateTokenForUser(authenticationModel.Username);
             }
-            return "ERROR: Credenciales Invalidos";
+            return "ERROR";
         }
         
         

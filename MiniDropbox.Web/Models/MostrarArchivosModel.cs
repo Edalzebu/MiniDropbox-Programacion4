@@ -8,6 +8,7 @@ namespace MiniDropbox.Web.Models
 {
     public class MostrarArchivosModel
     {
-        public FileResult file { get; set; }
+        public long id { get; set; }
+        public FileContentResult file { get; set; }
     }
 }
