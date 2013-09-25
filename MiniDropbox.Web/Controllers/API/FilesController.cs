@@ -51,21 +51,17 @@ namespace MiniDropbox.Web.Controllers.API
         
 
         // POST api/files
-        public bool Post([FromBody]UploadFileModel model, [FromUri] string token) // Para subir un archivo
+        public bool Post([FromUri] string token, [FromUri] string currentPath) // Para subir un archivo
         {
-
+            var file = HttpContext.Current.Request.Files[0];
             var account = CheckPermissions(token);
-            if (model != null)
+
+            if (CheckCuenta(account))
             {
-                if (CheckCuenta(account))
-                {
-                    if (UploadFile(model))
-                    {
-                        return true;
-                    }
-                }
+                if (UploadFile(currentPath ?? "", file, account))
+                    return true;
             }
-            
+
             return false;
 
         }
@@ -145,27 +141,27 @@ namespace MiniDropbox.Web.Controllers.API
             }
             return false;
         }
-        private bool UploadFile(UploadFileModel model)
+        private bool UploadFile(string currentPath, HttpPostedFile file, Account userData)
         {
-            var fileControl = model.file;
+            var fileControl = file;
             if (fileControl == null)
             {
                 return false;
             }
-
+ 
             var fileSize = fileControl.ContentLength;
-
+ 
             if (fileSize > 10485760)
             {
                 return false;
             }
-
-            var userData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
-            var actualPath = model.CurrentPath;
+ 
+            //var userData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var actualPath = currentPath;
             var fileName = Path.GetFileName(fileControl.FileName);
-
-            
-
+ 
+           
+ 
             if (userData.Files.Count(l => l.Name == fileName) > 0)//Actualizar Info Archivo
             {
                 var bddInfo = userData.Files.FirstOrDefault(f => f.Name == fileName);
@@ -189,7 +185,7 @@ namespace MiniDropbox.Web.Controllers.API
                 });
                 _writeOnlyRepository.Update(userData);
             }
-
+ 
             //fileControl.SaveAs(path);
             var putObjectRequest = new PutObjectRequest
             {
@@ -197,10 +193,11 @@ namespace MiniDropbox.Web.Controllers.API
                 Key = actualPath + fileName,
                 InputStream = fileControl.InputStream
             };
-
+ 
             AWSClient.PutObject(putObjectRequest);
-
+ 
             return true;
         }
+    
     }
 }
