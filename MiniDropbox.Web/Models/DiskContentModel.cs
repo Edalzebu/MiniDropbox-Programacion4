@@ -11,5 +11,8 @@ namespace MiniDropbox.Web.Models
         public DateTime ModifiedDate { get; set; }
         [Display(AutoGenerateField = false)]
         public bool IsShared { get; set; }
+        [Display(AutoGenerateField = false)]
+        public long Account_id { get; set; }
+
     }
 }

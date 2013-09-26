@@ -122,8 +122,9 @@ namespace MiniDropbox.Web.Controllers
                 Name = "Shared",
                 Url = "",
                 Type = "",
-                ModifiedDate = DateTime.Now
-
+                ModifiedDate = DateTime.Now,
+                IsRead=true,
+                IsWrite=true
             });
             _writeOnlyRepository.Update(createdAccount);
 

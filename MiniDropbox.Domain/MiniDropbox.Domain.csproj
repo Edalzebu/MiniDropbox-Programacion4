@@ -47,10 +47,9 @@
     <Compile Include="Entities\IEntity.cs" />
     <Compile Include="Entities\Package.cs" />
     <Compile Include="Entities\PublicFolder.cs" />
-
     <Compile Include="Entities\RecibosVentas.cs" />
-
     <Compile Include="Entities\Role.cs" />
+    <Compile Include="Entities\SharedWorking.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IReadOnlyRepository.cs" />
     <Compile Include="Services\IWriteOnlyRepository.cs" />

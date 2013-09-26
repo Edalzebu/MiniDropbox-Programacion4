@@ -52,6 +52,33 @@
             $('#FilePublicFolderPopup').modal('toggle');
         });
     }
+    
+    function showModalshredWorking() {
+
+        var url = $('#FileSharedWorkinPopup').data('url');
+
+        $.get(url, function (data) {
+            $('#FileSharedWorkinPopup').html(data);
+
+            //$('#gameModal').modal('show');
+            $('#FileSharedWorkinPopup').modal('toggle');
+        });
+    }
+
+
+    function showModalFolderpermissions() {
+
+        var url = $('#Folderpermissions').data('url');
+
+        $.get(url, function (data) {
+            $('#Folderpermissions').html(data);
+
+            //$('#gameModal').modal('show');
+            $('#Folderpermissions').modal('toggle');
+        });
+    }
+
+   
 
     function showNewFolderModal() {
         $('#createFolderModal').modal('toggle');
@@ -140,7 +167,7 @@
             <td></td>
             @foreach (var property in Model[0].VisibleProperties())
             {
-                if (property.Name != "IsShared")
+                if (property.Name != "IsShared" && property.Name != "Account_id")
                 {
                     <th>
                         @property.GetLabel().ToSeparatedWords()
@@ -168,9 +195,9 @@
                 }
                 else
                 {
-                    <td style = "text-align: center; width: 32px" ><img src = "~/Content/images/Icons/folder_heart.png"title = "" /> </td>
+                    <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/folder_user.png" title=""/> </td>
                 }
-            }
+            }            
             else if (model.Type.Contains("jpeg"))
             {
                 <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/file_extension_jpeg.png" title=""/></td>
@@ -186,7 +213,7 @@
 
             @foreach (var property in model.VisibleProperties())
             {
-                if (property.Name != "IsShared")
+                if (property.Name != "IsShared" && property.Name != "Account_id")
                 {
                     <td>
                         @if (property.Name == "Name" && string.IsNullOrEmpty(model.Type))
@@ -209,43 +236,59 @@
                     <ul class="dropdown-menu">
                         @{
                             @Html.TryPartial("_actions", model)
-            routevalues = model.GetIdValue();
+                            routevalues = model.GetIdValue();
 
 
-            if (string.IsNullOrEmpty(model.Type))
-            {
-                if (!model.IsShared)
-                {
-                                    <label class="controls-row">   public folder: <a class="icon-folder-open" onclick=" showModalPublicFolder(); " href="#" title="File Shared" style="padding-left: 10px"></a>
+                            if (string.IsNullOrEmpty(model.Type))
+                            {
+                                if (!model.IsShared && model.Name != "Shared")
+                                {
+                                    <label class="controls-row">   Public folder: <a class="icon-folder-open" onclick=" showModalPublicFolder(); " href="#" title="File Shared" style="padding-left: 10px"></a>
                                     </label>
-                }
-            }
+                                    <label class="controls-row">   Shared folder: <a class="icon-folder-close" onclick=" showModalshredWorking(); " href="#" title="File Shared" style="padding-left: 10px"></a>
+                                    </label>
+                                }
+                                else
+                                {
+                                    if (model.Account_id == Convert.ToInt64(Session["IdAccount"]))
+                                    {
+                                        <label class="controls-row">    Folder permissions : <a class="icon-pencil" onclick=" showModalFolderpermissions(); " href="#" title="File Shared" style="padding-left: 10px"></a>
+                                        </label>
+                                    }
+                                }
+                            }
 
-            if (!string.IsNullOrEmpty(model.Type))
-            {
-                var modelo = model;
+                            if (!string.IsNullOrEmpty(model.Type))
+                            {
+                                var modelo = model;
                                 <li>@Html.ActionLink("Download", "DownloadFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
-                            <li><a href="#" data-toggle="modal" onclick="showModal2('#VerFileModalContainerID','#VerFileModalBodyID', @modelo.Id)" >Ver Archivo</a> </li>
-            }
+                                <li><a href="#" data-toggle="modal" onclick=" showModal2('#VerFileModalContainerID', '#VerFileModalBodyID', @modelo.Id) " >Ver Archivo</a> </li>
+                            }
 
                             @*<li class="divider"></li>*@
-            if (model.Name != "Shared" && !model.IsShared)
-            {
+                            if (model.Name != "Shared" && !model.IsShared && !string.IsNullOrEmpty(model.Type))
+                            {
                                 <label class="controls-row">   Shared: <a class="icon-share" onclick=" showModalshared(); " href="#" title="File Shared" style="padding-left: 10px"></a>
                                 </label>
+                            }
+                            if (model.Name != "Shared" && !model.IsShared)
+                            {
                                 <li>@Html.ActionLink("Delete", "DeleteFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
-            }
-            else if (model.IsShared)
-            {
+                            }
+
+                            if (model.IsShared && model.Account_id == Convert.ToInt64(Session["IdAccount"]))
+                            {
                                 <li>@Html.ActionLink("Stop Shared", "Stopshared", new { @id = routevalues.Values.FirstOrDefault() })</li>
-            }
+                            }
+
+
                         }
                     </ul>
                 </div>
 
             </td>
         </tr>
-            index++;
+                            index++;
     }
 
 </table>
@@ -253,13 +296,21 @@
 <div class="modal hide fade in modal-form" id="FileUploadPopUp"  data-url='@Url.Action("FileUploadModal", "Disk")'>
     
 </div>
-                             
+                       
+      
 <div class="modal hide fade in modal-form" id="FileSharedPopup"  data-url='@Url.Action("Shared", "Disk", new { @fileId = routevalues.Values.FirstOrDefault() })'>
 </div>
       
                        
 <div class="modal hide fade in modal-form" id="FilePublicFolderPopup"  data-url='@Url.Action("PublicFolder", "Disk", new { @fileId = routevalues.Values.FirstOrDefault() })'>
 </div>                                                       
+
+<div class="modal hide fade in modal-form" id="FileSharedWorkinPopup"  data-url='@Url.Action("CompartirFriend", "Disk", new { @fileId = routevalues.Values.FirstOrDefault() })'>
+</div>            
+
+<div class="modal hide fade in modal-form" id="Folderpermissions"  data-url='@Url.Action("Folderpermissions", "Disk", new { @fileId = routevalues.Values.FirstOrDefault() })'>
+</div>                                                       
+                  
 
 <div class="modal hide fade in modal-form" id="FileDeleteMessage">
     <img class="badge-warning"/>

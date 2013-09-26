@@ -16,5 +16,9 @@ namespace MiniDropbox.Domain
         public virtual bool IsArchived { get; set; }
         public virtual bool IsDirectory { get; set; }
         public virtual bool IsShared { get; set; }
+        public virtual bool IsRead { get; set; }
+        public virtual bool IsWrite { get; set; }
+        public virtual long? Account_id { get; set; }
+        
     }
 }

@@ -4,13 +4,18 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using Amazon.S3.Model;
 using Amazon.S3.Model;
 using AutoMapper;
 using BootstrapMvcSample.Controllers;
+using Microsoft.Ajax.Utilities;
 using MiniDropbox.Domain;
 using MiniDropbox.Domain.Entities;
 using MiniDropbox.Domain.Services;
@@ -50,26 +55,85 @@ namespace MiniDropbox.Web.Controllers
             else
                 userFiles = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name).Files;
 
+            var usiarioActual = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            Session["IdAccount"] = usiarioActual.Id;
             var userContent = new List<DiskContentModel>();
             if (userFiles != null)
             {
                 foreach (var file in userFiles)
                 {
-
                     if (file == null)
                         continue;
                     var fileFolderArray = file.Url.Split('/');
                     var fileFolder = fileFolderArray.Length > 1
                         ? fileFolderArray[fileFolderArray.Length - 2]
                         : fileFolderArray.FirstOrDefault();
-
-
-
-
+                    
                     if (!file.IsArchived && fileFolder.Equals(actualFolder) && !string.Equals(file.Name, actualFolder))
                         userContent.Add(Mapper.Map<DiskContentModel>(file));
                     else if (!file.IsArchived && file.IsShared && actualFolder == "Shared")
                         userContent.Add(Mapper.Map<DiskContentModel>(file));
+
+                    if (file.IsShared && file.Name != "Shared" && file.Type == string.Empty)
+                    {
+                        File file1 = file;
+                        var filesintofolder = _readOnlyRepository.Query<File>(x => x.Url == file1.Name + '/' && x.IsShared == false && x.Account_id != usiarioActual.Id).ToList();
+                        foreach (var filesInto in filesintofolder)
+                        {
+                            if (filesInto == null)
+                                continue;
+                            fileFolderArray = filesInto.Url.Split('/');
+                            fileFolder = fileFolderArray.Length > 1
+                                ? fileFolderArray[fileFolderArray.Length - 2]
+                                : fileFolderArray.FirstOrDefault();
+
+                            if (fileFolder != null && (!filesInto.IsArchived && fileFolder.Equals(actualFolder) &&
+                                                       !string.Equals(filesInto.Name, actualFolder)))
+                                userContent.Add(Mapper.Map<DiskContentModel>(filesInto));
+                            else if (!filesInto.IsArchived && filesInto.IsShared && actualFolder == "Shared")
+                                userContent.Add(Mapper.Map<DiskContentModel>(filesInto));
+                        }
+                    }
+                }
+            }
+
+            //agregar carpetas compartidas
+
+            var folderShared = _readOnlyRepository.Query<SharedWorking>(x => x.UserReceive == User.Identity.Name).ToList();
+
+            foreach (var userCompartio in folderShared)
+            {
+                SharedWorking compartio = userCompartio;
+                var filesShared = _readOnlyRepository.First<File>(x => x.Id == compartio.File_Id);
+
+                if (filesShared == null)
+                    continue;
+                var fileFolderArray = filesShared.Url.Split('/');
+                var fileFolder = fileFolderArray.Length > 1
+                    ? fileFolderArray[fileFolderArray.Length - 2]
+                    : fileFolderArray.FirstOrDefault();
+
+                if (!filesShared.IsArchived && fileFolder.Equals(actualFolder) &&
+                    !string.Equals(filesShared.Name, actualFolder))
+                    userContent.Add(Mapper.Map<DiskContentModel>(filesShared));
+                else if (!filesShared.IsArchived && filesShared.IsShared && actualFolder == "Shared")
+                    userContent.Add(Mapper.Map<DiskContentModel>(filesShared));
+
+                var filesintofolder = _readOnlyRepository.Query<File>(x => x.Url == compartio.Url && x.Account_id != usiarioActual.Id).ToList();
+                foreach (var filesInto in filesintofolder)
+                {
+                    if (filesInto == null)
+                        continue;
+                    fileFolderArray = filesInto.Url.Split('/');
+                    fileFolder = fileFolderArray.Length > 1
+                        ? fileFolderArray[fileFolderArray.Length - 2]
+                        : fileFolderArray.FirstOrDefault();
+
+                    if (!filesInto.IsArchived && fileFolder.Equals(actualFolder) &&
+                        !string.Equals(filesInto.Name, actualFolder))
+                        userContent.Add(Mapper.Map<DiskContentModel>(filesInto));
+                    else if (!filesInto.IsArchived && filesInto.IsShared && actualFolder == "Shared")
+                        userContent.Add(Mapper.Map<DiskContentModel>(filesInto));
                 }
             }
 
@@ -109,18 +173,53 @@ namespace MiniDropbox.Web.Controllers
                 Error("The file must be of 10 MB or less!!!");
                 return RedirectToAction("ListAllContent");
             }
-            fileUploader(fileControl,User.Identity.Name);
-            AddActivity("El usuario ha subido el siguiente archivo "+fileControl.FileName);
-            Success("File uploaded successfully!!! :D");
+
+            if (fileUploader(fileControl, User.Identity.Name))
+            {
+                AddActivity("El usuario ha subido el siguiente archivo " + fileControl.FileName);
+                Success("File uploaded successfully!!! :D");
+            }
+
             return RedirectToAction("ListAllContent");
+        }
+
+
+        internal bool tienePermisos(string actualPath, int opcion)
+        {
+            var splicarpeta = actualPath.Split('/');
+
+            var folderActural = _readOnlyRepository.First<File>(x => x.Name == splicarpeta[splicarpeta.Length - 2]);
+
+            if (folderActural != null)
+            {
+                switch (opcion)
+                {
+                    case 1:
+                        if (folderActural.IsRead)
+                            return true;
+                        break;
+                    case 2:
+                        if (folderActural.IsWrite)
+                            return true;
+                        break;
+                }
+            }
+            return false;
         }
 
         private bool fileUploader(HttpPostedFileBase fileControl, string user)
         {
+
+            if (!tienePermisos(Session["ActualPath"].ToString(), 2))
+            {
+                Error("No puede agregar o actualizar archivos la carpeta esta protegida");
+                return false;
+            }
+
             var userData = _readOnlyRepository.First<Account>(x => x.EMail == user);
             var actualPath = Session["ActualPath"].ToString();
             var fileName = Path.GetFileName(fileControl.FileName);
-
+            
             //var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/"+actualPath);
            
             //var directoryInfo = new DirectoryInfo(serverFolderPath);
@@ -161,7 +260,7 @@ namespace MiniDropbox.Web.Controllers
             }
             else
             {
-                userData.Files.Add(new File
+                var file=new File
                 {
                     Name = fileName,
                     CreatedDate = DateTime.Now,
@@ -170,9 +269,12 @@ namespace MiniDropbox.Web.Controllers
                     Type = fileControl.ContentType,
                     Url = actualPath,
                     IsArchived = false,
-                    IsDirectory = false
-                });
-                _writeOnlyRepository.Update(userData);
+                    IsDirectory = false,
+                    IsRead = true,
+                    IsWrite = false,
+                    Account_id=userData.Id
+                };
+                file = _writeOnlyRepository.Create(file);
             }
 
             //fileControl.SaveAs(path);
@@ -188,12 +290,23 @@ namespace MiniDropbox.Web.Controllers
             AWSClient.PutObject(putObjectRequest);
 
 
+
+
+
             return true;
             
         }
 
         public ActionResult DeleteFile(int fileId)
         {
+
+
+            if (!tienePermisos(Session["ActualPath"].ToString(), 2))
+            {
+                Error("No puede Eliminar Archivos la carpeta esta protegida");
+                return RedirectToAction("ListAllContent");
+            }
+
             var userData = _readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
             var fileToDelete = userData.Files.FirstOrDefault(f => f.Id == fileId);
 
@@ -260,6 +373,13 @@ namespace MiniDropbox.Web.Controllers
         [HttpPost]
         public ActionResult CreateFolder(string folderName)
         {
+
+            if (!tienePermisos(Session["ActualPath"].ToString(), 2))
+            {
+                Error("No puede crear folder la carpeta esta protegida");
+                return RedirectToAction("ListAllContent");
+            }
+
             if (folderName.Length > 25)
             {
                 Error("Folder name should be 25 characters maximum!!!");
@@ -299,6 +419,8 @@ namespace MiniDropbox.Web.Controllers
                 IsDirectory = true,
                 ModifiedDate = DateTime.Now,
                 Type = "",
+                IsRead = true,
+                IsWrite = false,
                 Url = actualPath
             });
 
@@ -317,6 +439,13 @@ namespace MiniDropbox.Web.Controllers
 
         public void DeleteFolder(long folderId)
         {
+
+            if (!tienePermisos(Session["ActualPath"].ToString(), 2))
+            {
+                Error("No puede Eliminar Folder la carpeta esta protegida");
+                return;
+            }
+
             var userData = _readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
             var folderToDelete = userData.Files.FirstOrDefault(f => f.Id == folderId);
 
@@ -399,6 +528,13 @@ namespace MiniDropbox.Web.Controllers
 
         public ActionResult DownloadFile(int fileId)
         {
+
+            if (!tienePermisos(Session["ActualPath"].ToString(), 2))
+            {
+                Error("No puede Descargar Archivos la carpeta esta protegida");
+                return RedirectToAction("ListAllContent");
+            }
+
             var userData =_readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
             var fileData = userData.Files.FirstOrDefault(f => f.Id == fileId);
 
@@ -624,6 +760,7 @@ namespace MiniDropbox.Web.Controllers
             }
             return View(userContent);
         }
+
         public void AddActivity(string actividad)
         {
             var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
@@ -641,6 +778,7 @@ namespace MiniDropbox.Web.Controllers
             ar.file = Download(id);
             return PartialView(ar);
         }
+
         public FileResult Download(long id)
         {
             var userData = _readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
@@ -664,5 +802,179 @@ namespace MiniDropbox.Web.Controllers
             // Assuming that the resume is an MS Word document...
             return File(fileStream, fileData.Type);
         }
+
+        [HttpGet]
+        public PartialViewResult CompartirFriend(long fileId)
+        {
+            Session["IDARCHIVOCOMPARTIR"] = fileId;
+            return PartialView(new FolderSharedModelRezdWrite());
+        }
+
+        private Boolean email_bien_escrito(String email)
+        {
+            String expresion;
+            expresion = "\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
+            if (Regex.IsMatch(email, expresion))
+            {
+                if (Regex.Replace(email, expresion, String.Empty).Length == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        [HttpPost]
+        public ActionResult CompartirFriend(FolderSharedModelRezdWrite model)
+        {
+            //Validemos que este todo bien.....
+
+            var emails = model.Email.Split(';');
+
+            #region verificacion
+
+            if (!model.Email.Contains(";"))
+            {
+                if (!email_bien_escrito(model.Email))
+                {
+                    Error("Email Incorrecto.............");
+                    return RedirectToAction("ListAllContent");
+                }
+            }
+            else
+            {
+                if (emails.Any(email => !email_bien_escrito(email)))
+                {
+                    Error(
+                        "Emails no valido, verifique que sus correos esten separados correctamente o escritos correctamente");
+                    return RedirectToAction("ListAllContent");
+                }
+            }
+
+            #endregion
+
+            var file = _readOnlyRepository.First<File>(x => x.Id == Convert.ToInt64(Session["IDARCHIVOCOMPARTIR"]));
+
+            foreach (var email in emails)
+            {
+                var exisfshared = _readOnlyRepository.First<FileShared>(x => x.UserReceive == email);
+                if (exisfshared != null)
+                {
+                    file.FileShared_id = exisfshared.Id;
+                    file.IsShared = true;
+                    _writeOnlyRepository.Update<File>(file);
+                }
+                else
+                {
+                    var fshared = new SharedWorking
+                    {
+                        File_Id = file.Id,
+                        IsArchived = false,
+                        UserShared = User.Identity.Name,
+                        UserReceive = email,
+                        Url = file.Name + '/'
+                    };
+                    var cfshared = _writeOnlyRepository.Create<SharedWorking>(fshared);
+
+                    file.IsShared = true;
+                    _writeOnlyRepository.Update<File>(file);
+
+                    AddActivity("El usuario ha compartido la siguiente carpeta: " + file.Name + " al usuario " + email);
+                }
+
+                #region Envio de Mail o Invitacion
+
+                var accoun = _readOnlyRepository.First<Account>(x => x.EMail == email);
+
+                var accounActual = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+                if (accoun != null)
+                {
+
+                    var emailBody = new StringBuilder("<b>Se ha compartido el archivo: </b>");
+                    emailBody.Append("<b>" + accounActual.Name + " " + accounActual.LastName + "</b>");
+                    emailBody.Append(
+                        "<b> Se ha compartido el archivo: " + file.Name + "!!" + "</b>");
+                    emailBody.Append("<br/>");
+                    emailBody.Append(
+                        "<b>Ingrese a MiniDropbox, Para accesar a la carpeta que se le compartio.!!! </b>");
+
+                    emailBody.Append("<br/>");
+                    emailBody.Append("<br/>");
+                    emailBody.Append("<br/>");
+
+                    if (!MailSender.SendEmail(email, "Join Mini DropBox", emailBody.ToString()))
+                        Error(email + " E-Mail couldn't be sent!!!!");
+                }
+                else
+                {
+                    var userData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+
+                    var emailBody = new StringBuilder("<b>Your friend </b>");
+                    emailBody.Append("<b>" + userData.Name + " " + userData.LastName + "</b>");
+                    emailBody.Append(
+                        "<b> Te compartio la carpeta: " + file.Name + "!!" + "</b>");
+                    emailBody.Append("<br/>");
+                    emailBody.Append(
+                        "<b> , wants you to join to MiniDropBox, a site where you can store your files in the cloud!!</b>");
+                    emailBody.Append("<br/>");
+                    emailBody.Append("<br/>");
+                    emailBody.Append(
+                        "<b>To register in the site just click on the link below and fill up a quick form! Enjoy!!! </b>");
+
+                    //emailBody.Append("http://minidropbox-1.apphb.com/AccountSignUp/AccountSignUp?token=" + userId);
+                    emailBody.Append("http://localhost:1840/AccountSignUp/AccountSignUp?token=" + userData.Id);
+                    emailBody.Append("<br/>");
+                    emailBody.Append("<br/>");
+                    emailBody.Append("<br/>");
+
+                    if (!MailSender.SendEmail(email, "Join Mini DropBox", emailBody.ToString()))
+                        Error(email + " E-Mail couldn't be sent  !!!!");
+                }
+
+
+                #endregion
+            }
+            Success("Folder Compartido Correctamente");
+
+            return RedirectToAction("ListAllContent");
+        }
+
+        [HttpGet]
+        public PartialViewResult Folderpermissions(long fileId)
+        {
+            Session["IDARCHIVOCOMPARTIR"] = fileId;
+            var model = new FolderPerimssionsModel();
+            var file = _readOnlyRepository.First<File>(x => x.Id == fileId);
+            if(file!=null)
+            {
+                model.IsRead = file.IsRead;
+                model.Iswrite = file.IsWrite;
+            }
+
+            return PartialView(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Folderpermissions(FolderPerimssionsModel model)
+        {
+            var file = _readOnlyRepository.First<File>(x => x.Id == Convert.ToInt64(Session["IDARCHIVOCOMPARTIR"]));
+            if (file != null)
+            {
+                file.IsRead = model.IsRead;
+                file.IsWrite = model.Iswrite;
+            }
+            _writeOnlyRepository.Update<File>(file);
+            Success("Permisos cambiados Correctamente");
+            return RedirectToAction("ListAllContent");
+        }
     }
+
 }

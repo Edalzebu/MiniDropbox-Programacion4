@@ -13,6 +13,6 @@ namespace MiniDropbox.Web.Models
         [Required(ErrorMessage = "Este campo no puede quedar vacio")]
         [EmailAddress(ErrorMessage = "Debe tener Formato de Email")]
         public string Email { get; set; }
-    
+        
     }
 }

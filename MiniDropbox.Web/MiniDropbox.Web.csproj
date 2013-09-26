@@ -217,8 +217,10 @@
     <Compile Include="Models\ChangePasswordModel.cs" />
     <Compile Include="Models\ChangeUserSpaceLimitModel.cs" />
     <Compile Include="Models\DiskContentModel.cs" />
+    <Compile Include="Models\FolderPerimssionsModel.cs" />
     <Compile Include="Models\FolderPublicoModel.cs" />
     <Compile Include="Models\FolderPublicoModel2.cs" />
+    <Compile Include="Models\FolderSharedModelRezdWrite.cs" />
     <Compile Include="Models\HomeInputModel.cs" />
     <Compile Include="Models\FileSearchResult.cs" />
     <Compile Include="Models\MostrarArchivosModel.cs" />
@@ -247,6 +249,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\images\dropbox-logo3.gif" />
+    <Content Include="Content\images\eliminar.png" />
     <Content Include="Content\images\glyphicons-halflings-white.png" />
     <Content Include="Content\images\glyphicons-halflings.png" />
     <Content Include="Content\images\Icons\200.png" />
@@ -2253,9 +2256,11 @@
     <Content Include="Content\images\Icons\zoom_out.png" />
     <Content Include="Content\images\Icons\zoom_refresh.png" />
     <Content Include="Content\images\Icons\zoom_selection.png" />
+    <Content Include="Content\listas.css" />
     <Content Include="Global.asax" />
     <Content Include="scripts\bootstrap.js" />
     <Content Include="scripts\bootstrap.min.js" />
+    <Content Include="scripts\ext\jquery-1.7.2.min.js" />
     <Content Include="scripts\html5shiv.js" />
     <Content Include="local.config">
       <SubType>Designer</SubType>
@@ -2273,6 +2278,7 @@
     <Content Include="scripts\jquery.validate.unobtrusive-custom-for-bootstrap.js" />
     <Content Include="scripts\jquery.validate.unobtrusive.js" />
     <Content Include="scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="scripts\listas.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -2327,6 +2333,9 @@
     <Content Include="Views\Bitacora\Actividades.cshtml" />
     <Content Include="Views\Bitacora\SearchActivity.cshtml" />
     <Content Include="Views\Disk\ShowFile.cshtml" />
+    <Content Include="Views\Disk\CompartirFriend.cshtml" />
+    <Content Include="Views\AccountProfile\LimitedTextArea.cshtml" />
+    <Content Include="Views\Disk\Folderpermissions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
