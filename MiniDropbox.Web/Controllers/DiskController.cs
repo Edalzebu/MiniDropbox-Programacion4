@@ -747,7 +747,10 @@ namespace MiniDropbox.Web.Controllers
             var ar = new MostrarArchivosModel();
             ar.id = id;
             ar.file = Download(id);
-           
+            var userData = _readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
+            var fileData = userData.Files.FirstOrDefault(f => f.Id == id);
+            ar.filename = fileData.Name;
+            ar.Bucket = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name).BucketName;
             return PartialView(ar);
         }
 

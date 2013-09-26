@@ -13,18 +13,19 @@
             
            
             @{
-                if (Model.file.ContentType == "mp4")
+                var link = "http://s3.amazonaws.com/" + Model.Bucket + "/" + Session["ActualPath"].ToString() +Model.filename;
+                if (Model.file.ContentType == "video/mp4")
                 {
                     <video width="320" height="240" controls>
-                    <source src="movie.mp4" type="video/mp4">
-                        <source src="movie.ogg" type="video/ogg">
+                    <source src="@link" type="video/mp4">
+                        
                         Your browser does not support the video tag.
                     </video>
                 }
                 if (Model.file.ContentType == "audio/mp3")
                 {
                     <audio controls>
-                        <source src='@Url.Action("DownloadAudio", "Disk", new{id=Model.id})' type="audio/mp3" />
+                        <source src="@link" type="audio/mp3" />
                         <p>Your browser does not support HTML 5 audio element</p>
                     </audio>
                 }
@@ -34,7 +35,7 @@
                 }
                 if (Model.file.ContentType == "image/jpeg")
                 {
-                    <img id="showingImage" src='@Url.Action("Download","Disk", new{id = Model.id})' width="320" height="320"/>
+                    <img id="showingImage" src="@link" width="320" height="320"/>
                 }
             }
             

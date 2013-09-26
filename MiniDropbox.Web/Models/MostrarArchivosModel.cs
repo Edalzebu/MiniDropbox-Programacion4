@@ -10,7 +10,8 @@ namespace MiniDropbox.Web.Models
     {
         public long id { get; set; }
         public FileContentResult file { get; set; }
-       
+        public string Bucket { get; set; }
+        public string filename { get; set; }
         public string Redirection { get; set; }
     }
 }
