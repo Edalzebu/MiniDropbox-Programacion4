@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using MiniDropbox.Domain.Entities;
 
 namespace MiniDropbox.Domain
 {
@@ -15,6 +17,7 @@ namespace MiniDropbox.Domain
         public virtual DateTime ModifiedDate { get; set; }
         public virtual bool IsArchived { get; set; }
         public virtual bool IsDirectory { get; set; }
+        public virtual IList<FileVersion> FileVersions { get; set; }
         public virtual bool IsShared { get; set; }
     }
 }
