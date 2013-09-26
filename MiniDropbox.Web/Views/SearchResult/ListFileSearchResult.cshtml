@@ -58,7 +58,7 @@
                 <td>
                     @if (property.Name == "Url")
                     {
-                        @Html.ActionLink("" + @Html.Display(index + "." + property.Name), "ListFolderContent","Disk", new { @folderName = model.Url.Split('\\').LastOrDefault() }, new { @class = "btn-link" })
+                        @Html.ActionLink("" + @Html.Display(index + "." + property.Name), "ListFolderContent","Disk", new { @folderName = model.Url.Split('/').LastOrDefault() }, new { @class = "btn-link" })
                     }
                     else
                     {

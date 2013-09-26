@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -19,6 +18,7 @@ namespace MiniDropbox.Web.Controllers
     {
         private readonly IReadOnlyRepository _readOnlyRepository;
         private readonly IWriteOnlyRepository _writeOnlyRepository;
+        
 
         public DiskController(IWriteOnlyRepository writeOnlyRepository, IReadOnlyRepository readOnlyRepository)
         {
@@ -32,6 +32,7 @@ namespace MiniDropbox.Web.Controllers
             //var actualPath = Session["ActualPath"].ToString();
             var actualFolder = Session["ActualFolder"].ToString();
             var userData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+
             var userFiles = userData.Files;
 
             var userContent = new List<DiskContentModel>();
@@ -222,7 +223,7 @@ namespace MiniDropbox.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateFolder(string folderName)
+        public ActionResult CreateFolder(string folderName, string clientDateTime)
         {
             if (folderName.Length > 25)
             {
@@ -251,16 +252,16 @@ namespace MiniDropbox.Web.Controllers
             //    Error("Folder already exists!!!");
             //    return RedirectToAction("ListAllContent");
             //}
-
+            var clientDate = Convert.ToDateTime(clientDateTime);
             
             userData.Files.Add(new File
             {
                 Name = folderName,
-                CreatedDate = DateTime.Now,
+                CreatedDate = clientDate,
                 FileSize = 0,
                 IsArchived = false,
                 IsDirectory = true,
-                ModifiedDate = DateTime.Now,
+                ModifiedDate = clientDate,
                 Type = "",
                 Url = actualPath
             });
@@ -351,10 +352,10 @@ namespace MiniDropbox.Web.Controllers
 
         public ActionResult DownloadFile(int fileId)
         {
-            var userData =_readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
+            var userData = _readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
             var fileData = userData.Files.FirstOrDefault(f => f.Id == fileId);
 
-            var objectRequest = new GetObjectRequest{BucketName =userData.BucketName,Key = fileData.Url+fileData.Name};
+            var objectRequest = new GetObjectRequest{BucketName =userData.BucketName,Key = fileData.Url+fileData.Name,Timeout = int.MaxValue,ReadWriteTimeout = int.MaxValue};
             var file=AWSClient.GetObject(objectRequest);
             var byteArray = new byte[file.ContentLength];
             file.ResponseStream.Read(byteArray, 0,(int)file.ContentLength);
@@ -362,9 +363,119 @@ namespace MiniDropbox.Web.Controllers
 
             return new FileContentResult(byteArray, fileData.Type)
             {
-            FileDownloadName = fileData.Name};
+                FileDownloadName = fileData.Name
+
+            };
 
         }
-        
+
+        public ActionResult RenameObject(long objectId, string newObjectName, string clientDateTime2)
+        {
+            var userData = _readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
+            var fileData = _readOnlyRepository.GetById<File>(objectId);
+            var clientDate = Convert.ToDateTime(clientDateTime2);
+
+            if (!fileData.IsDirectory)
+            {
+                //Copy the object
+                var copyRequest = new CopyObjectRequest
+                {
+                    SourceBucket = userData.BucketName,
+                    SourceKey = fileData.Url + fileData.Name,
+                    DestinationBucket = userData.BucketName,
+                    DestinationKey = fileData.Url + newObjectName + "." + (fileData.Name.Split('.').LastOrDefault()),
+                    CannedACL = S3CannedACL.PublicRead
+                };
+                
+                AWSClient.CopyObject(copyRequest);
+
+                //Delete the original
+                var deleteRequest = new DeleteObjectRequest
+                {
+                    BucketName = userData.BucketName,
+                    Key = fileData.Url + fileData.Name
+                };
+                AWSClient.DeleteObject(deleteRequest);
+
+                fileData.ModifiedDate = clientDate;
+                fileData.Name = newObjectName+"."+(fileData.Name.Split('.').LastOrDefault());
+                _writeOnlyRepository.Update(fileData);
+            }
+            else
+            {
+                RenameFolder(objectId,fileData.Name,newObjectName,clientDateTime2);
+                fileData.ModifiedDate = clientDate;
+                fileData.Name = newObjectName;
+                _writeOnlyRepository.Update(fileData);
+            }
+            
+            return RedirectToAction("ListAllContent");
+        }
+
+        public void RenameFolder(long objectId,string oldObjectName, string newObjectName, string clientDateTime2)
+        {
+            var userData = _readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
+            var fileData = userData.Files.FirstOrDefault(f => f.Id == objectId);
+
+            var userFiles = userData.Files.Where(t => t.Url.Contains(fileData.Name));
+            
+            var clientDate = Convert.ToDateTime(clientDateTime2);
+            var newFoldUrl = string.IsNullOrEmpty(fileData.Url) || string.IsNullOrWhiteSpace(fileData.Url)
+                ? newObjectName + "/"
+                : fileData.Url.Replace(oldObjectName, newObjectName) + fileData.Name + "/";
+
+            var putFolder = new PutObjectRequest { BucketName = userData.BucketName, Key = newFoldUrl, ContentBody = string.Empty };
+            AWSClient.PutObject(putFolder);
+
+            foreach (var file in userFiles)
+            {
+                if (file == null)
+                    continue;
+
+                if (file.IsDirectory)
+                {
+                    RenameFolder(file.Id,oldObjectName,newObjectName,clientDateTime2);
+                }
+                else
+                {
+                    //Copy the object
+                    var newUrl = file.Url.Replace(oldObjectName, newObjectName) + file.Name;
+
+                    var copyRequest = new CopyObjectRequest
+                    {
+                        SourceBucket = userData.BucketName,
+                        SourceKey = file.Url + file.Name,
+                        DestinationBucket = userData.BucketName,
+                        DestinationKey = newUrl,
+                        CannedACL = S3CannedACL.PublicRead
+                    };
+
+                    AWSClient.CopyObject(copyRequest);
+
+                    //Delete the original
+                    var deleteRequest = new DeleteObjectRequest
+                    {
+                        BucketName = userData.BucketName,
+                        Key = file.Url + file.Name
+                    };
+                    AWSClient.DeleteObject(deleteRequest);
+
+                    file.ModifiedDate = clientDate;
+                    file.Url = file.Url.Replace(oldObjectName, newObjectName);
+                    _writeOnlyRepository.Update(file);
+                }
+            }//fin foreach
+
+            var deleteFolderRequest = new DeleteObjectRequest
+            {
+                BucketName = userData.BucketName,
+                Key = fileData.Url + fileData.Name + "/"
+            };
+            AWSClient.DeleteObject(deleteFolderRequest);
+            var newFolderUrl = fileData.Url.Replace(oldObjectName, newObjectName);
+            fileData.Url = newFolderUrl;
+            
+            _writeOnlyRepository.Update(fileData);
+        }
     }
 }

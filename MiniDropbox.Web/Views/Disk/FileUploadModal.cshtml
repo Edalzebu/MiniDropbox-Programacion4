@@ -3,9 +3,7 @@
 <script type="text/javascript">
     function getClientDateTime() {
         var textBox = document.getElementById("clientDateTime");
-        //alert("Paso por la funcion!!!");
-        //var dateTimeCookie = "dateTimeCookie";
-        //$.cookie(dateTimeCookie, new Date().getDate);
+
         var now = new Date();
         var year = "" + now.getFullYear();
         var month = "" + (now.getMonth() + 1); if (month.length == 1) { month = "0" + month; }
@@ -30,6 +28,6 @@
                 <button type="submit" class="btn btn-primary" onclick="getClientDateTime();" >Upload</button>
                 <a class="btn btn-danger" href="#" data-dismiss="modal">Close</a>
             </div>
-           <input type="text" class="input-medium" id="clientDateTime" name="clientDateTime" value=""/>
+           <input type="text" class="hidden" id="clientDateTime" name="clientDateTime" value=""/>
         }
     </div>

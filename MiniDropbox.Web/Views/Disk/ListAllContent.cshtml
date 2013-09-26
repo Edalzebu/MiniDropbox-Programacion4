@@ -21,9 +21,15 @@
        
     function showNewFolderModal() {
         $('#createFolderModal').modal('toggle');
-        $('#folderName').val();
+        //$('#folderName').val();
     }
     
+    function showRenameObjectModal(fileId) {
+        $('#renameObjectModal').modal('toggle');
+        var textBox = document.getElementById("objectId");
+        textBox.value = fileId;
+    }
+
     function showFileDeleteMessage(fileId) {
         var divOptions = $("#Options");
         divOptions.empty();
@@ -64,6 +70,21 @@
             else
                 targetTable.rows.item(rowIndex).style.display = 'table-row';
         }
+    }
+    
+    function getClientDateTime() {
+        var textBox = document.getElementById("clientDateTime");
+        var textBox2 = document.getElementById("clientDateTime2");
+
+        var now = new Date();
+        var year = "" + now.getFullYear();
+        var month = "" + (now.getMonth() + 1); if (month.length == 1) { month = "0" + month; }
+        var day = "" + now.getDate(); if (day.length == 1) { day = "0" + day; }
+        var hour = "" + now.getHours(); if (hour.length == 1) { hour = "0" + hour; }
+        var minute = "" + now.getMinutes(); if (minute.length == 1) { minute = "0" + minute; }
+        var second = "" + now.getSeconds(); if (second.length == 1) { second = "0" + second; }
+        textBox.value = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+        textBox2.value = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
     }
        
 </script>
@@ -148,7 +169,7 @@
             }
                                 
                             @*<li class="divider"></li>*@
-                            <li>@Html.ActionLink("Delete1", "DeleteFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
+                            <li><a href="#" onclick="showRenameObjectModal(@routevalues.Values.FirstOrDefault())">Rename</a></li>
                             <li><a href="#" onclick="showFileDeleteMessage(@routevalues.Values.FirstOrDefault())">Delete</a></li>   
                             
                         }
@@ -182,21 +203,42 @@
 </div>
 <div id="createFolderModal" class="modal hide fade in modal-form" >
     <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3>Create New Folder</h3>
-</div>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>Create New Folder</h3>
+    </div>
     <div class="modal-body">
-         @using (@Html.BeginForm("CreateFolder", "Disk", FormMethod.Post, new { enctype = "multipart/form-data" }))
-         {
-             <label class="control-label">Folder Name: </label>
-             <input type="text" id="folderName" name="folderName" class="input-medium"/>
+        @using (@Html.BeginForm("CreateFolder", "Disk", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <label class="control-label">Folder Name: </label>
+            <input type="text" id="folderName" name="folderName" class="input-medium"/>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" >Create</button>
+                <button type="submit" class="btn btn-primary" onclick="getClientDateTime();">Create</button>
                 <a class="btn btn-danger" href="#" data-dismiss="modal">Close</a>
             </div>
-        
-         }
+            <input type="text" class="hidden" id="clientDateTime" name="clientDateTime" value=""/>
+        }
       
+    </div>
+
+</div>
+
+<div id="renameObjectModal" class="modal hide fade in modal-form" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>Rename Object</h3>
+    </div>
+    <div class="modal-body">
+        @using (@Html.BeginForm("RenameObject", "Disk", FormMethod.Post))
+        {
+            <label class="control-label">New Name: </label>
+            <input type="text" id="newObjectName" name="newObjectName" class="input-medium"/>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" onclick="getClientDateTime();">Rename</button>
+                <a class="btn btn-danger" href="#" data-dismiss="modal">Close</a>
+            </div>
+            <input type="text" class="hidden" id="objectId" name="objectId" value=""/>
+            <input type="text" class="hidden" id="clientDateTime2" name="clientDateTime2" value=""/>
+        }
     </div>
 
 </div>
