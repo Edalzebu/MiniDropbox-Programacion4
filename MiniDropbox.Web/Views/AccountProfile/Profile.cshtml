@@ -1,0 +1,59 @@
+﻿@using System.Activities.Expressions
+@using BootstrapSupport
+@using Microsoft.Web.Mvc.Controls
+@model Object
+
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Views/shared/_BootstrapLayout.basic.cshtml";
+}
+
+<h2>Profile Page</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    <fieldset class="form-horizontal">
+        <legend><small>This is your profile page, here you can update your account information</small></legend>
+        @foreach (var property in Model.VisibleProperties())
+        {
+            using(Html.ControlGroupFor(property.Name)){
+               
+                     @Html.Label(property.Name.ToSeparatedWords(), new {@class = "control-label"})
+                    
+                    
+                <div class="controls">
+                    @Html.Editor(property.Name, new {@class = "input-small"})
+                    @if (property.Name == "SpaceLimit")
+                    { 
+                        <small> GB</small>
+                    }
+                    @if (property.Name == "UsedSpace")
+                    {
+                        if (property.Attributes > 0)
+                        {
+                            <small> GB</small>
+                        }
+                        else
+                        {
+                             <small> MB</small>
+                        }
+                    }
+                    @Html.ValidationMessage(property.Name, null, new {@class = "help-inline"})
+                  
+                </div>
+                
+                
+            }
+        }
+        <div class="form-actions">
+            
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+            @*<button type="submit" class="btn btn-danger" >Cancel </button>*@
+            @Html.ActionLink("Change Password", "ChangePassword","AccountProfile",new { @class = "btn btn-inverse" })
+            @Html.ActionLink("Back", "Cancel","AccountProfile",new { @class = "btn" })
+        </div>
+    </fieldset>
+}
+
+

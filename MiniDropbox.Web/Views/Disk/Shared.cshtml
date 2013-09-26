@@ -1,0 +1,33 @@
+﻿@using BootstrapSupport
+@model MiniDropbox.Web.Models.FolderPublicoModel2
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3>File Shared</h3>
+</div>
+<div class="control-group modal-body">
+@using (@Html.BeginForm("Shared", "Disk", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.ValidationSummary(true)
+    <fieldset class="form-horizontal">
+        <div>
+            <legend>Ingrese dirección de correo electrónico y haga clic en "Enviar".
+                para notificarle a su amigo que le compartio un archivo <small></small></legend>
+        </div>
+        @foreach (var property in Model.VisibleProperties())
+        {
+            using(Html.ControlGroupFor(property.Name)){
+                @Html.Label(property.Name.ToSeparatedWords(), new { @class = "control-label" })
+                <div class="controls">
+                    @Html.Editor(property.Name, new { @class = "input-xlarge" })
+                    @Html.ValidationMessage(property.Name, null, new { @class = "help-inline" })
+                </div>
+            }
+        }
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Enviar</button>
+            @Html.ActionLink("Cancel", "ListAllContent", null, new { @class = "btn " })
+        </div>
+    </fieldset>
+}
+</div>
+

@@ -1,0 +1,65 @@
+﻿@using BootstrapSupport
+@using NHibernate.Criterion
+@model List<MiniDropbox.Web.Models.PackageModel>
+@*  *@
+@{
+    ViewBag.Title = "Packages List";
+    Layout = "~/Views/shared/_BootstrapLayout.basic.cshtml";
+}
+
+<h2 style="text-align: center">Packages List</h2>
+<br/>
+
+<table class="table table-striped ">
+    <caption></caption>
+    <thead class="text-center">
+        <tr>
+             
+            @foreach (var property in Model[0].VisibleProperties())
+            {
+                <th>
+                    @property.GetLabel().ToSeparatedWords()
+                </th>
+            }
+            <th></th>
+        </tr>
+    </thead>
+    <p>
+    @Html.ActionLink("Create New", "CreatePackage", null, new {@class = "btn btn-primary"})
+    </p>
+    @{ int index = 0; }
+    @foreach (var model in Model)
+    {
+        ViewData[index.ToString()] = model;
+        <tr>
+            @foreach (var property in model.VisibleProperties())
+            {
+                <td>
+                    @Html.Display(index + "." + property.Name)
+                </td>                    
+            }
+            <td>
+                <div class="btn-group">
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        Action
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        @{
+                            @Html.TryPartial("_actions", model)                            
+                            var routevalues = model.GetIdValue();  
+                            <li>@Html.ActionLink("Edit", "EditPackage","PackageList" ,new{packageId=routevalues.Values.FirstOrDefault()},null)</li>
+                            @*<li>@Html.ActionLink("Details", "Details", routevalues)</li>*@
+                            @*<li class="divider"></li>*@
+                            <li>@Html.ActionLink("Activate/Deactivate Package", "DeactivatePackage","PackageList",new{packageId=routevalues.Values.FirstOrDefault()},null)</li>
+                               
+                        }
+                    </ul>
+                </div>
+
+            </td>
+        </tr>
+            index++;
+    }
+
+</table>
