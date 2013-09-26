@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AcklenAvenue.Data.Fakes</name>
+    </assembly>
+    <members>
+        <member name="T:AcklenAvenue.Data.Fakes.StubIDatabaseMappingScheme`1">
+            <summary>Tipo stub de AcklenAvenue.Data.IDatabaseMappingScheme`1</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.Fakes.StubIDatabaseMappingScheme`1.#ctor">
+            <summary>Inicializa una nueva instancia de type StubIDatabaseMappingScheme</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.Fakes.StubIDatabaseMappingScheme`1.MappingsGet">
+            <summary>Establecer el stub de IDatabaseMappingScheme`1.get_Mappings()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.Fakes.StubIDatabaseMappingScheme`1.aad::AcklenAvenue#Data#IDatabaseMappingScheme{TTypeOfMappingConfiguration}#Mappings">
+            <summary>Establecer el stub de IDatabaseMappingScheme`1.get_Mappings()</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.Fakes.StubIDependencyResolutionConfigurer`1">
+            <summary>Tipo stub de AcklenAvenue.Data.IDependencyResolutionConfigurer`1</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.Fakes.StubIDependencyResolutionConfigurer`1.#ctor">
+            <summary>Inicializa una nueva instancia de type StubIDependencyResolutionConfigurer</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.Fakes.StubIDependencyResolutionConfigurer`1.ConfigureGet">
+            <summary>Establecer el stub de IDependencyResolutionConfigurer`1.get_Configure()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.Fakes.StubIDependencyResolutionConfigurer`1.aad::AcklenAvenue#Data#IDependencyResolutionConfigurer{TTypeOfContainer}#Configure">
+            <summary>Establecer el stub de IDependencyResolutionConfigurer`1.get_Configure()</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.Fakes.StubIUnitOfWork`1">
+            <summary>Tipo stub de AcklenAvenue.Data.IUnitOfWork`1</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.Fakes.StubIUnitOfWork`1.#ctor">
+            <summary>Inicializa una nueva instancia de type StubIUnitOfWork</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.Fakes.StubIUnitOfWork`1.aad::AcklenAvenue#Data#IUnitOfWork{TContext}#Commit(System.Action{`0})">
+            <summary>Establecer el stub de IUnitOfWork`1.Commit(Action`1&lt;!0&gt; action)</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.Fakes.StubIUnitOfWork`1.aad::AcklenAvenue#Data#IUnitOfWork{TContext}#Commit``1(System.Func{`0,``0})">
+            <summary>Establecer el stub de IUnitOfWork`1.Commit(Func`2&lt;!0,!!0&gt; func)</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.Fakes.StubIUnitOfWork`1.CommitActionOfT0">
+            <summary>Establecer el stub de IUnitOfWork`1.Commit(Action`1&lt;!0&gt; action)</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.Fakes.StubIUnitOfWork`1.CommitOf1FuncOfT0M0``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Func{`0,``0},``0})">
+            <summary>Establecer stubs de Commit(Func`2&lt;!0,!!0&gt; func)</summary>
+        </member>
+    </members>
+</doc>
