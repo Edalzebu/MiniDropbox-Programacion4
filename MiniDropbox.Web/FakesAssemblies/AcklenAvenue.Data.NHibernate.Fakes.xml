@@ -1,0 +1,458 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AcklenAvenue.Data.NHibernate.Fakes</name>
+    </assembly>
+    <members>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator">
+            <summary>Tipo de correcciones de compatibilidad (shim) de AcklenAvenue.Data.NHibernate.DefaultSessionContainerConfigurator</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.#ctor">
+            <summary>Inicializa una nueva instancia de correcciones de compatibilidad (shim)</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.#ctor(AcklenAvenue.Data.NHibernate.DefaultSessionContainerConfigurator)">
+            <summary>Inicializa nuevas correcciones de compatibilidad (shim) para la instancia especificada</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.BehaveAsCurrent">
+            <summary>Asigna el comportamiento &apos;Current&apos; a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.BehaveAsNotImplemented">
+            <summary>Asigna el comportamiento &apos;NotImplemented&apos; a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.Bind(AcklenAvenue.Data.NHibernate.ISessionContainerConfigurator)">
+            <summary>Asocia los miembros de la interfaz a las correcciones de compatibilidad (shim).</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.Behavior">
+            <summary>Asigna el comportamiento a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.ConstructorFuncOfISessionFactoryISessionActionOfISessionFactoryActionOfISessionFactory">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.DefaultSessionContainerConfigurator(Func`2&lt;ISessionFactory,ISession&gt; getCurrentSession, Action`1&lt;ISessionFactory&gt; openNewSession, Action`1&lt;ISessionFactory&gt; destroySession)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.DestroySessionGet">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.get_DestroySession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.DestroySessionSetActionOfISessionFactory">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.set_DestroySession(Action`1&lt;ISessionFactory&gt; value)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.GetCurrentSessionGet">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.get_GetCurrentSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.GetCurrentSessionSetFuncOfISessionFactoryISession">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.set_GetCurrentSession(Func`2&lt;ISessionFactory,ISession&gt; value)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.OpenNewSessionGet">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.get_OpenNewSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.OpenNewSessionSetActionOfISessionFactory">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.set_OpenNewSession(Action`1&lt;ISessionFactory&gt; value)</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.AllInstances">
+            <summary>Definir correcciones de compatibilidad (shim) para todos los miembros de instancia</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.AllInstances.DestroySessionGet">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.get_DestroySession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.AllInstances.DestroySessionSetActionOfISessionFactory">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.set_DestroySession(Action`1&lt;ISessionFactory&gt; value)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.AllInstances.GetCurrentSessionGet">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.get_GetCurrentSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.AllInstances.GetCurrentSessionSetFuncOfISessionFactoryISession">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.set_GetCurrentSession(Func`2&lt;ISessionFactory,ISession&gt; value)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.AllInstances.OpenNewSessionGet">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.get_OpenNewSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimDefaultSessionContainerConfigurator.AllInstances.OpenNewSessionSetActionOfISessionFactory">
+            <summary>Establecer el shim de DefaultSessionContainerConfigurator.set_OpenNewSession(Action`1&lt;ISessionFactory&gt; value)</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator">
+            <summary>Tipo de correcciones de compatibilidad (shim) de AcklenAvenue.Data.NHibernate.NHibernateContextSessionContainerConfigurator</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.#ctor">
+            <summary>Inicializa una nueva instancia de correcciones de compatibilidad (shim)</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.#ctor(AcklenAvenue.Data.NHibernate.NHibernateContextSessionContainerConfigurator)">
+            <summary>Inicializa nuevas correcciones de compatibilidad (shim) para la instancia especificada</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.BehaveAsCurrent">
+            <summary>Asigna el comportamiento &apos;Current&apos; a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.BehaveAsNotImplemented">
+            <summary>Asigna el comportamiento &apos;NotImplemented&apos; a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.Bind(AcklenAvenue.Data.NHibernate.ISessionContainerConfigurator)">
+            <summary>Asocia los miembros de la interfaz a las correcciones de compatibilidad (shim).</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.Behavior">
+            <summary>Asigna el comportamiento a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.Constructor">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.NHibernateContextSessionContainerConfigurator()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.DestroySessionGet">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.get_DestroySession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.DestroySessionSetActionOfISessionFactory">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.set_DestroySession(Action`1&lt;ISessionFactory&gt; value)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.GetCurrentSessionGet">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.get_GetCurrentSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.GetCurrentSessionSetFuncOfISessionFactoryISession">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.set_GetCurrentSession(Func`2&lt;ISessionFactory,ISession&gt; value)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.OpenNewSessionGet">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.get_OpenNewSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.OpenNewSessionSetActionOfISessionFactory">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.set_OpenNewSession(Action`1&lt;ISessionFactory&gt; value)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator._ctorb__0ISessionFactory">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.&lt;.ctor&gt;b__0(ISessionFactory x)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator._ctorb__1ISessionFactory">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.&lt;.ctor&gt;b__1(ISessionFactory x)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator._ctorb__2ISessionFactory">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.&lt;.ctor&gt;b__2(ISessionFactory x)</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.AllInstances">
+            <summary>Definir correcciones de compatibilidad (shim) para todos los miembros de instancia</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.AllInstances.DestroySessionGet">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.get_DestroySession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.AllInstances.DestroySessionSetActionOfISessionFactory">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.set_DestroySession(Action`1&lt;ISessionFactory&gt; value)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.AllInstances.GetCurrentSessionGet">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.get_GetCurrentSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.AllInstances.GetCurrentSessionSetFuncOfISessionFactoryISession">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.set_GetCurrentSession(Func`2&lt;ISessionFactory,ISession&gt; value)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.AllInstances.OpenNewSessionGet">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.get_OpenNewSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.AllInstances.OpenNewSessionSetActionOfISessionFactory">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.set_OpenNewSession(Action`1&lt;ISessionFactory&gt; value)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimNHibernateContextSessionContainerConfigurator.AllInstances._ctorb__0ISessionFactory">
+            <summary>Establecer el shim de NHibernateContextSessionContainerConfigurator.&lt;.ctor&gt;b__0(ISessionFactory x)</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer">
+            <summary>Tipo de correcciones de compatibilidad (shim) de AcklenAvenue.Data.NHibernate.SessionContainer</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.#ctor">
+            <summary>Inicializa una nueva instancia de correcciones de compatibilidad (shim)</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.#ctor(AcklenAvenue.Data.NHibernate.SessionContainer)">
+            <summary>Inicializa nuevas correcciones de compatibilidad (shim) para la instancia especificada</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.BehaveAsCurrent">
+            <summary>Asigna el comportamiento &apos;Current&apos; a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.BehaveAsNotImplemented">
+            <summary>Asigna el comportamiento &apos;NotImplemented&apos; a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.Bind(AcklenAvenue.Data.NHibernate.ISessionContainer)">
+            <summary>Asocia los miembros de la interfaz a las correcciones de compatibilidad (shim).</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.Bind(System.IDisposable)">
+            <summary>Asocia los miembros de la interfaz a las correcciones de compatibilidad (shim).</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.Behavior">
+            <summary>Asigna el comportamiento a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.CloseSession">
+            <summary>Establecer el shim de SessionContainer.CloseSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.ConstructorISessionFactoryISessionContainerConfigurator">
+            <summary>Establecer el shim de SessionContainer.SessionContainer(ISessionFactory sessionFactory, ISessionContainerConfigurator sessionContainerConfigurator)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.Dispose">
+            <summary>Establecer el shim de SessionContainer.Dispose()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.OpenSession">
+            <summary>Establecer el shim de SessionContainer.OpenSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.SessionGet">
+            <summary>Establecer el shim de SessionContainer.get_Session()</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.AllInstances">
+            <summary>Definir correcciones de compatibilidad (shim) para todos los miembros de instancia</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.AllInstances.CloseSession">
+            <summary>Establecer el shim de SessionContainer.CloseSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.AllInstances.Dispose">
+            <summary>Establecer el shim de SessionContainer.Dispose()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.AllInstances.OpenSession">
+            <summary>Establecer el shim de SessionContainer.OpenSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionContainer.AllInstances.SessionGet">
+            <summary>Establecer el shim de SessionContainer.get_Session()</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder">
+            <summary>Tipo de correcciones de compatibilidad (shim) de AcklenAvenue.Data.NHibernate.SessionFactoryBuilder</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.#ctor">
+            <summary>Inicializa una nueva instancia de correcciones de compatibilidad (shim)</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.#ctor(AcklenAvenue.Data.NHibernate.SessionFactoryBuilder)">
+            <summary>Inicializa nuevas correcciones de compatibilidad (shim) para la instancia especificada</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.BehaveAsCurrent">
+            <summary>Asigna el comportamiento &apos;Current&apos; a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.BehaveAsNotImplemented">
+            <summary>Asigna el comportamiento &apos;NotImplemented&apos; a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.Bind(AcklenAvenue.Data.NHibernate.ISessionFactoryBuilder)">
+            <summary>Asocia los miembros de la interfaz a las correcciones de compatibilidad (shim).</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.Behavior">
+            <summary>Asigna el comportamiento a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.BuildActionOfConfiguration">
+            <summary>Establecer el shim de SessionFactoryBuilder.Build(Action`1&lt;Configuration&gt; additionalConfiguration)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.ConstructorIDatabaseMappingSchemeOfMappingConfigurationIPersistenceConfigurerIInterceptor">
+            <summary>Establecer el shim de SessionFactoryBuilder.SessionFactoryBuilder(IDatabaseMappingScheme`1&lt;MappingConfiguration&gt; mappingScheme, IPersistenceConfigurer persistenceConfigurer, IInterceptor interceptor)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.GetFluentConfiguration">
+            <summary>Establecer el shim de SessionFactoryBuilder.GetFluentConfiguration()</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.AllInstances">
+            <summary>Definir correcciones de compatibilidad (shim) para todos los miembros de instancia</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.AllInstances.BuildActionOfConfiguration">
+            <summary>Establecer el shim de SessionFactoryBuilder.Build(Action`1&lt;Configuration&gt; additionalConfiguration)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimSessionFactoryBuilder.AllInstances.GetFluentConfiguration">
+            <summary>Establecer el shim de SessionFactoryBuilder.GetFluentConfiguration()</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork">
+            <summary>Tipo de correcciones de compatibilidad (shim) de AcklenAvenue.Data.NHibernate.UnitOfWork</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.#ctor">
+            <summary>Inicializa una nueva instancia de correcciones de compatibilidad (shim)</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.#ctor(AcklenAvenue.Data.NHibernate.UnitOfWork)">
+            <summary>Inicializa nuevas correcciones de compatibilidad (shim) para la instancia especificada</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.BehaveAsCurrent">
+            <summary>Asigna el comportamiento &apos;Current&apos; a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.BehaveAsNotImplemented">
+            <summary>Asigna el comportamiento &apos;NotImplemented&apos; a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.Bind(AcklenAvenue.Data.IUnitOfWork{NHibernate.ISession})">
+            <summary>Asocia los miembros de la interfaz a las correcciones de compatibilidad (shim).</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.CommitOf1FuncOfISessionM0``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Func{NHibernate.ISession,``0},``0})">
+            <summary>Establecer el shim de UnitOfWork.Commit(Func`2&lt;ISession,!!0&gt; func)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.Behavior">
+            <summary>Asigna el comportamiento a todos los métodos del tipo corregido para compatibilidad</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.CommitActionOfISession">
+            <summary>Establecer el shim de UnitOfWork.Commit(Action`1&lt;ISession&gt; action)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.ConstructorISessionContainer">
+            <summary>Establecer el shim de UnitOfWork.UnitOfWork(ISessionContainer sessionContainer)</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.AllInstances">
+            <summary>Definir correcciones de compatibilidad (shim) para todos los miembros de instancia</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.AllInstances.CommitOf1FuncOfISessionM0``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{AcklenAvenue.Data.NHibernate.UnitOfWork,System.Func{NHibernate.ISession,``0},``0})">
+            <summary>Establecer el shim de UnitOfWork.Commit(Func`2&lt;ISession,!!0&gt; func)</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.ShimUnitOfWork.AllInstances.CommitActionOfISession">
+            <summary>Establecer el shim de UnitOfWork.Commit(Action`1&lt;ISession&gt; action)</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.StubDefaultSessionContainerConfigurator">
+            <summary>Tipo stub de AcklenAvenue.Data.NHibernate.DefaultSessionContainerConfigurator</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubDefaultSessionContainerConfigurator.#ctor(System.Func{NHibernate.ISessionFactory,NHibernate.ISession},System.Action{NHibernate.ISessionFactory},System.Action{NHibernate.ISessionFactory})">
+            <summary>Inicializa una nueva instancia</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubDefaultSessionContainerConfigurator.InitializeStub">
+            <summary>Inicializa una nueva instancia de type StubDefaultSessionContainerConfigurator</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubDefaultSessionContainerConfigurator.CallBase">
+            <summary>Obtiene o establece un valor que indica si debe llamarse al método base en lugar del comportamiento de reserva</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubDefaultSessionContainerConfigurator.InstanceBehavior">
+            <summary>Obtiene o establece el comportamiento de instancia.</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubDefaultSessionContainerConfigurator.InstanceObserver">
+            <summary>Obtiene o establece el observador de la instancia.</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainer">
+            <summary>Tipo stub de AcklenAvenue.Data.NHibernate.ISessionContainer</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainer.#ctor">
+            <summary>Inicializa una nueva instancia de type StubISessionContainer</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainer.aadnh::AcklenAvenue#Data#NHibernate#ISessionContainer#CloseSession">
+            <summary>Establecer el stub de ISessionContainer.CloseSession()</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainer.aadnh::AcklenAvenue#Data#NHibernate#ISessionContainer#OpenSession">
+            <summary>Establecer el stub de ISessionContainer.OpenSession()</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainer.CloseSession">
+            <summary>Establecer el stub de ISessionContainer.CloseSession()</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainer.Dispose">
+            <summary>Establecer el stub de IDisposable.Dispose()</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainer.OpenSession">
+            <summary>Establecer el stub de ISessionContainer.OpenSession()</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainer.SessionGet">
+            <summary>Establecer el stub de ISessionContainer.get_Session()</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainer.global::System#IDisposable#Dispose">
+            <summary>Establecer el stub de IDisposable.Dispose()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainer.aadnh::AcklenAvenue#Data#NHibernate#ISessionContainer#Session">
+            <summary>Establecer el stub de ISessionContainer.get_Session()</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainerConfigurator">
+            <summary>Tipo stub de AcklenAvenue.Data.NHibernate.ISessionContainerConfigurator</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainerConfigurator.#ctor">
+            <summary>Inicializa una nueva instancia de type StubISessionContainerConfigurator</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainerConfigurator.DestroySessionGet">
+            <summary>Establecer el stub de ISessionContainerConfigurator.get_DestroySession()</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainerConfigurator.GetCurrentSessionGet">
+            <summary>Establecer el stub de ISessionContainerConfigurator.get_GetCurrentSession()</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainerConfigurator.OpenNewSessionGet">
+            <summary>Establecer el stub de ISessionContainerConfigurator.get_OpenNewSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainerConfigurator.aadnh::AcklenAvenue#Data#NHibernate#ISessionContainerConfigurator#DestroySession">
+            <summary>Establecer el stub de ISessionContainerConfigurator.get_DestroySession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainerConfigurator.aadnh::AcklenAvenue#Data#NHibernate#ISessionContainerConfigurator#GetCurrentSession">
+            <summary>Establecer el stub de ISessionContainerConfigurator.get_GetCurrentSession()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubISessionContainerConfigurator.aadnh::AcklenAvenue#Data#NHibernate#ISessionContainerConfigurator#OpenNewSession">
+            <summary>Establecer el stub de ISessionContainerConfigurator.get_OpenNewSession()</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.StubISessionFactoryBuilder">
+            <summary>Tipo stub de AcklenAvenue.Data.NHibernate.ISessionFactoryBuilder</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubISessionFactoryBuilder.#ctor">
+            <summary>Inicializa una nueva instancia de type StubISessionFactoryBuilder</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubISessionFactoryBuilder.aadnh::AcklenAvenue#Data#NHibernate#ISessionFactoryBuilder#Build(System.Action{NHibernate.Cfg.Configuration})">
+            <summary>Establecer el stub de ISessionFactoryBuilder.Build(Action`1&lt;Configuration&gt; additionalConfiguration)</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubISessionFactoryBuilder.BuildActionOfConfiguration">
+            <summary>Establecer el stub de ISessionFactoryBuilder.Build(Action`1&lt;Configuration&gt; additionalConfiguration)</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.StubNHibernateContextSessionContainerConfigurator">
+            <summary>Tipo stub de AcklenAvenue.Data.NHibernate.NHibernateContextSessionContainerConfigurator</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubNHibernateContextSessionContainerConfigurator.#ctor">
+            <summary>Inicializa una nueva instancia</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubNHibernateContextSessionContainerConfigurator.InitializeStub">
+            <summary>Inicializa una nueva instancia de type StubNHibernateContextSessionContainerConfigurator</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubNHibernateContextSessionContainerConfigurator.CallBase">
+            <summary>Obtiene o establece un valor que indica si debe llamarse al método base en lugar del comportamiento de reserva</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubNHibernateContextSessionContainerConfigurator.InstanceBehavior">
+            <summary>Obtiene o establece el comportamiento de instancia.</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubNHibernateContextSessionContainerConfigurator.InstanceObserver">
+            <summary>Obtiene o establece el observador de la instancia.</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer">
+            <summary>Tipo stub de AcklenAvenue.Data.NHibernate.SessionContainer</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.#ctor(NHibernate.ISessionFactory,AcklenAvenue.Data.NHibernate.ISessionContainerConfigurator)">
+            <summary>Inicializa una nueva instancia</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.CloseSession">
+            <summary>Establecer el stub de SessionContainer.CloseSession()</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.CloseSession01">
+            <summary>Establecer el stub de SessionContainer.CloseSession()</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.Dispose">
+            <summary>Establecer el stub de SessionContainer.Dispose()</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.Dispose01">
+            <summary>Establecer el stub de SessionContainer.Dispose()</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.InitializeStub">
+            <summary>Inicializa una nueva instancia de type StubSessionContainer</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.OpenSession">
+            <summary>Establecer el stub de SessionContainer.OpenSession()</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.OpenSession01">
+            <summary>Establecer el stub de SessionContainer.OpenSession()</summary>
+        </member>
+        <member name="F:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.SessionGet">
+            <summary>Establecer el stub de SessionContainer.get_Session()</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.CallBase">
+            <summary>Obtiene o establece un valor que indica si debe llamarse al método base en lugar del comportamiento de reserva</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.InstanceBehavior">
+            <summary>Obtiene o establece el comportamiento de instancia.</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.InstanceObserver">
+            <summary>Obtiene o establece el observador de la instancia.</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubSessionContainer.Session">
+            <summary>Establecer el stub de SessionContainer.get_Session()</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.StubSessionFactoryBuilder">
+            <summary>Tipo stub de AcklenAvenue.Data.NHibernate.SessionFactoryBuilder</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubSessionFactoryBuilder.#ctor(AcklenAvenue.Data.IDatabaseMappingScheme{FluentNHibernate.Cfg.MappingConfiguration},FluentNHibernate.Cfg.Db.IPersistenceConfigurer,NHibernate.IInterceptor)">
+            <summary>Inicializa una nueva instancia</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubSessionFactoryBuilder.InitializeStub">
+            <summary>Inicializa una nueva instancia de type StubSessionFactoryBuilder</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubSessionFactoryBuilder.CallBase">
+            <summary>Obtiene o establece un valor que indica si debe llamarse al método base en lugar del comportamiento de reserva</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubSessionFactoryBuilder.InstanceBehavior">
+            <summary>Obtiene o establece el comportamiento de instancia.</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubSessionFactoryBuilder.InstanceObserver">
+            <summary>Obtiene o establece el observador de la instancia.</summary>
+        </member>
+        <member name="T:AcklenAvenue.Data.NHibernate.Fakes.StubUnitOfWork">
+            <summary>Tipo stub de AcklenAvenue.Data.NHibernate.UnitOfWork</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubUnitOfWork.#ctor(AcklenAvenue.Data.NHibernate.ISessionContainer)">
+            <summary>Inicializa una nueva instancia</summary>
+        </member>
+        <member name="M:AcklenAvenue.Data.NHibernate.Fakes.StubUnitOfWork.InitializeStub">
+            <summary>Inicializa una nueva instancia de type StubUnitOfWork</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubUnitOfWork.CallBase">
+            <summary>Obtiene o establece un valor que indica si debe llamarse al método base en lugar del comportamiento de reserva</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubUnitOfWork.InstanceBehavior">
+            <summary>Obtiene o establece el comportamiento de instancia.</summary>
+        </member>
+        <member name="P:AcklenAvenue.Data.NHibernate.Fakes.StubUnitOfWork.InstanceObserver">
+            <summary>Obtiene o establece el observador de la instancia.</summary>
+        </member>
+    </members>
+</doc>

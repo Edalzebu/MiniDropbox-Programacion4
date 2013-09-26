@@ -1,0 +1,54 @@
+﻿@using BootstrapSupport
+@using NHibernate.Criterion
+@using MiniDropbox.Web.Models
+@model List<MiniDropbox.Web.Models.ActividadesModel>
+
+@{
+    ViewBag.Title = "Actividades";
+    Layout = "~/Views/shared/_BootstrapLayout.basic.cshtml";
+}
+
+
+
+
+<h4>Busqueda de actividades</h4>
+<table class="table table-striped">
+    <caption></caption>
+    <thead>
+        <tr>
+            @foreach (var property in Model[0].VisibleProperties())
+                 {
+                     <th>
+                    
+                         @property.GetLabel().ToSeparatedWords()
+                     </th>
+                 }
+            
+            <th></th>
+        </tr>
+    </thead>
+    @{ int index = 0; }
+    @foreach (var model in Model)
+    {
+        ViewData[index.ToString()] = model;
+        <tr>
+            @foreach (var property in model.VisibleProperties())
+            {
+                <td>
+                   
+                       @Html.Display(index + "." + property.Name)
+                    
+                   
+                </td>                    
+            }
+            
+        </tr>
+            index++;
+    }
+
+</table>
+<p>
+    
+    </p>
+
+

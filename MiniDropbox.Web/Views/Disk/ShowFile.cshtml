@@ -1,0 +1,50 @@
+﻿@model MiniDropbox.Web.Models.MostrarArchivosModel
+
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Mostrar</h3>
+    </div>
+
+    
+    <div  class="modal-body">
+        <div style="text-align: center">
+            
+            
+           
+            @{
+                if (Model.file.ContentType == "mp4")
+                {
+                    <video width="320" height="240" controls>
+                    <source src="movie.mp4" type="video/mp4">
+                        <source src="movie.ogg" type="video/ogg">
+                        Your browser does not support the video tag.
+                    </video>
+                }
+                if (Model.file.ContentType == "audio/mp3")
+                {
+                    <audio controls>
+                        <source src='@Url.Action("DownloadAudio", "Disk", new{id=Model.id})' type="audio/mp3" />
+                        <p>Your browser does not support HTML 5 audio element</p>
+                    </audio>
+                }
+                if (Model.file.ContentType == "text/plain")
+                {
+                    <iframe src='@Url.Action("Download","Disk", new{id = Model.id})' name="iframe_a"></iframe>
+                }
+                if (Model.file.ContentType == "image/jpeg")
+                {
+                    <img id="showingImage" src='@Url.Action("Download","Disk", new{id = Model.id})' width="320" height="320"/>
+                }
+            }
+            
+            
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Atras</button>
+        
+    </div> 
+
+
