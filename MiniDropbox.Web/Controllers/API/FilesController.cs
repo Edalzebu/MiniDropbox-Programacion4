@@ -56,27 +56,19 @@ namespace MiniDropbox.Web.Controllers.API
             
             if (HttpContext.Current == null)
                 return "Current";
-            if (HttpContext.Current.Request == null)
-                return "Request";
-            if (HttpContext.Current.Request.Files[0] == null)
-                return "file";
-            else
-                return HttpContext.Current.Request.Files[0].FileName;
-           /* else
+          
+            var file = HttpContext.Current.Request.Files[0];
+            var account = CheckPermissions(token);
+
+            if (CheckCuenta(account))
             {
-                var file = HttpContext.Current.Request.Files[0];
-                var account = CheckPermissions(token);
-
-                if (CheckCuenta(account))
-                {
-                    if (UploadFile(currentPath ?? "", file, account))
-                        return "No esta nulo";
-                }
-
-                return "Otro error";
+                if (UploadFile(currentPath ?? "", file, account))
+                    return "No esta nulo";
             }
-            */
 
+            return "Otro error";
+            
+            
         }
 
        // DELETE api/files/5

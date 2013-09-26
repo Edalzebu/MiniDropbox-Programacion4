@@ -260,12 +260,14 @@
             {
                                 <label class="controls-row">   Shared: <a class="icon-share" onclick=" showModalshared(); " href="#" title="File Shared" style="padding-left: 10px"></a>
                                 </label>
-                                <li>@Html.ActionLink("Delete", "DeleteFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
+                               <li><a href="#" onclick="showRenameObjectModal(@routevalues.Values.FirstOrDefault())">Rename</a></li>
+                            <li><a href="#" onclick="showFileDeleteMessage(@routevalues.Values.FirstOrDefault())">Delete</a></li>  
             }
             else if (model.IsShared)
             {
                                 <li>@Html.ActionLink("Stop Shared", "Stopshared", new { @id = routevalues.Values.FirstOrDefault() })</li>
             }
+                             
                         }
                     </ul>
                 </div>

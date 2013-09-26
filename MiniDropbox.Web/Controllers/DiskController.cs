@@ -109,13 +109,13 @@ namespace MiniDropbox.Web.Controllers
                 Error("The file must be of 10 MB or less!!!");
                 return RedirectToAction("ListAllContent");
             }
-            fileUploader(fileControl,User.Identity.Name);
+            fileUploader(fileControl,User.Identity.Name,clientDateTime);
             AddActivity("El usuario ha subido el siguiente archivo "+fileControl.FileName);
             Success("File uploaded successfully!!! :D");
             return RedirectToAction("ListAllContent");
         }
 
-        private bool fileUploader(HttpPostedFileBase fileControl, string user)
+        private bool fileUploader(HttpPostedFileBase fileControl, string user,string clientDateTime)
         {
             var userData = _readOnlyRepository.First<Account>(x => x.EMail == user);
             var actualPath = Session["ActualPath"].ToString();
@@ -411,7 +411,8 @@ namespace MiniDropbox.Web.Controllers
             return new FileContentResult(byteArray, fileData.Type)
             {
                 FileDownloadName = fileData.Name
-}
+            };
+        }
         [HttpGet]
         public PartialViewResult Shared(int fileId)
         {
@@ -503,6 +504,67 @@ namespace MiniDropbox.Web.Controllers
             #endregion
 
             Success("Archivo Compartido Correctamente");
+            return RedirectToAction("ListAllContent");
+        }
+
+        [HttpGet]
+        public ActionResult Stopshared(long id)
+        {
+            var file = _readOnlyRepository.First<File>(x => x.Id == id);
+            if (file != null)
+            {
+                file.IsShared = false;
+                _writeOnlyRepository.Update<File>(file);
+                Success("Recurso se dejo de compartir correctamente");
+            }
+            return RedirectToAction("ListAllContent");
+        }
+        [HttpGet]
+        public PartialViewResult PublicFolder(long fileId)
+        {
+            Session["IDARCHIVOCOMPARTIRPUBLICO"] = fileId;
+            return PartialView(new FolderPublicoModel());
+        }
+
+        [HttpPost]
+        public ActionResult PublicFolder(FolderPublicoModel model)
+        {
+            var account = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
+            var file =
+                _readOnlyRepository.First<File>(x => x.Id == Convert.ToInt64(Session["IDARCHIVOCOMPARTIRPUBLICO"]));
+
+            var fpublico = new PublicFolder();
+            fpublico.Account_Id = account.Id; // este se podria cambiar por el email
+            fpublico.File_Id = file.Id;
+            fpublico.IsArchived = false;
+            fpublico.Token = System.Guid.NewGuid().ToString();
+            var publicFolder = _writeOnlyRepository.Create<PublicFolder>(fpublico);
+
+            file.IsShared = true;
+            file.PublicFolder_id = publicFolder.Id;
+            _writeOnlyRepository.Update<File>(file);
+
+            var emailBody = new StringBuilder("<b>Se ha compartido carpeta por: </b>");
+            emailBody.Append("<b>" + account.Name + " " + account.LastName + "</b>");
+            emailBody.Append(
+                "<b> Se ha compartido la carpeta : " + file.Name + "!!" + "</b>");
+            emailBody.Append("<br/>");
+            emailBody.Append(
+                "Ingrese a este link para ver los archivos de la carpeta: http://localhost:1840/Disk/SeePublicShare?Token=" +
+                fpublico.Token + "</b>");
+
+            emailBody.Append("<br/>");
+            emailBody.Append("<br/>");
+            emailBody.Append("<br/>");
+
+            if (MailSender.SendEmail(model.Email, "Shared Mini DropBox", emailBody.ToString()))
+            {
+                Success("Shared sent successfully!!");
+                return PartialView(model);
+            }
+            Error("E-Mail couldn't be sent!!!!");
+
+            Success("Folder Compartido Correctamente");
             return RedirectToAction("ListAllContent");
         }
 
