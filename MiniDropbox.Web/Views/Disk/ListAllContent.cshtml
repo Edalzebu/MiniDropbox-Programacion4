@@ -1,5 +1,6 @@
 ﻿@using BootstrapSupport
 @using Microsoft.Web.Mvc
+@using Microsoft.Web.Mvc.Html
 @model List<MiniDropbox.Web.Models.DiskContentModel>
 
 @{
@@ -192,6 +193,12 @@
                         {
                             @Html.ActionLink("" + @Html.Display(index + "." + property.Name), "ListFolderContent", new { @folderName = model.Name }, new { @class = "btn-link" })
                         }
+                        else if (property.Name == "Selected")
+                        {
+                            var modelo = model;
+                            <input type="checkbox" name="selectedObjects" onclick='@Url.Action("Checked","Disk", new { id = modelo.Id})' onchange='@Url.Action("Checked", new {id =modelo.Id})' > </input>
+                            
+                        }
                         else
                         {
                             @Html.Display(index + "." + property.Name)
@@ -291,6 +298,7 @@
 <div id="VerFileModalContainerID" class="modal hide fade" data-url='@Url.Action("ShowFile", "Disk")'> 
     <div id="VerFileModalBodyID"></div> 
 </div>
+
 @*data-url='@Url.Action("FileUploadModal")'*@
 
 @*new { enctype = "multipart/form-data" }*@

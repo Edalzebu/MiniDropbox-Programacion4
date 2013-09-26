@@ -640,6 +640,7 @@ namespace MiniDropbox.Web.Controllers
             var ar = new MostrarArchivosModel();
             ar.id = id;
             ar.file = Download(id);
+           
             return PartialView(ar);
         }
 
@@ -656,6 +657,7 @@ namespace MiniDropbox.Web.Controllers
             var file = AWSClient.GetObject(objectRequest);
             var byteArray = new byte[file.ContentLength];
             file.ResponseStream.Read(byteArray, 0, (int) file.ContentLength);
+            
             //var template_file = System.IO.File.ReadAllBytes();
 
             return new FileContentResult(byteArray, fileData.Type);
@@ -678,12 +680,17 @@ namespace MiniDropbox.Web.Controllers
             var byteArray = new byte[file.ContentLength];
             file.ResponseStream.Read(byteArray, 0, (int)file.ContentLength);
             //var template_file = System.IO.File.ReadAllBytes();
-
+            
             return File(byteArray, "audio/mp3");
 
 
             // Assuming that the resume is an MS Word document...
             // return File(t.FileStream, fileData.Type);
+        }
+
+        public ActionResult Checked(int id)
+        {
+            return View();
         }
     }
 }

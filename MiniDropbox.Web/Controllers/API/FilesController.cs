@@ -51,18 +51,31 @@ namespace MiniDropbox.Web.Controllers.API
         
 
         // POST api/files
-        public bool Post([FromUri] string token, [FromUri] string currentPath) // Para subir un archivo
+        public string Post([FromUri] string token, [FromUri] string currentPath) // Para subir un archivo
         {
-            var file = HttpContext.Current.Request.Files[0];
-            var account = CheckPermissions(token);
-
-            if (CheckCuenta(account))
+            
+            if (HttpContext.Current == null)
+                return "Current";
+            if (HttpContext.Current.Request == null)
+                return "Request";
+            if (HttpContext.Current.Request.Files[0] == null)
+                return "file";
+            else
+                return HttpContext.Current.Request.Files[0].FileName;
+           /* else
             {
-                if (UploadFile(currentPath ?? "", file, account))
-                    return true;
-            }
+                var file = HttpContext.Current.Request.Files[0];
+                var account = CheckPermissions(token);
 
-            return false;
+                if (CheckCuenta(account))
+                {
+                    if (UploadFile(currentPath ?? "", file, account))
+                        return "No esta nulo";
+                }
+
+                return "Otro error";
+            }
+            */
 
         }
 
