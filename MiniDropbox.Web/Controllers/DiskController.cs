@@ -117,19 +117,28 @@ namespace MiniDropbox.Web.Controllers
 
         private bool fileUploader(HttpPostedFileBase fileControl, string user,string clientDateTime)
         {
-            var userData = _readOnlyRepository.First<Account>(x => x.EMail == user);
+            if (fileControl == null)
+            {
+                Error("There was a problem uploading the file  , please try again!!!");
+                return false;
+            }
+            var fileSize = fileControl.ContentLength;
+            if (fileSize > 10485760)
+            {
+                Error("The file must be of 10 MB or less!!!");
+                return false;
+            }
+            var userData = _readOnlyRepository.First<Account>(x => x.EMail == User.Identity.Name);
             var actualPath = Session["ActualPath"].ToString();
             var fileName = Path.GetFileName(fileControl.FileName);
             var clientDate = Convert.ToDateTime(clientDateTime);
             //var serverFolderPath = Server.MapPath("~/App_Data/UploadedFiles/"+actualPath);
-           
-            //var directoryInfo = new DirectoryInfo(serverFolderPath);
 
+            //var directoryInfo = new DirectoryInfo(serverFolderPath);
             //if (!directoryInfo.Exists)
             //{
             //    directoryInfo.Create();
             //}
-
             //var sharedDirectory = new DirectoryInfo( Server.MapPath("~/App_Data/UploadedFiles/"+User.Identity.Name + "/Shared"));
             //if (!sharedDirectory.Exists)
             //{
@@ -146,49 +155,78 @@ namespace MiniDropbox.Web.Controllers
             //        IsDirectory = true
             //    });
             //}
-
             //var path = Path.Combine(serverFolderPath, fileName);
-
             //var fileInfo = new DirectoryInfo(serverFolderPath+fileName);
-
-            if (userData.Files.Count(l=>l.Name==fileName && l.Url.EndsWith(actualPath) && !l.IsArchived)>0)//Actualizar Info Archivo
-            {
-                var bddInfo = userData.Files.FirstOrDefault(f => f.Name == fileName);
-                bddInfo.ModifiedDate = clientDate;
-                bddInfo.Type = fileControl.ContentType;
-                bddInfo.FileSize = fileControl.ContentLength;
-                _writeOnlyRepository.Update(bddInfo);
-            }
-            else
-            {
-                userData.Files.Add(new File
-                {
-                    Name = fileName,
-                    CreatedDate = clientDate,
-                    ModifiedDate = clientDate,
-                    FileSize = fileControl.ContentLength,
-                    Type = fileControl.ContentType,
-                    Url = actualPath,
-                    IsArchived = false,
-                    IsDirectory = false
-                });
-                _writeOnlyRepository.Update(userData);
-            }
-
-            //fileControl.SaveAs(path);
             var putObjectRequest = new PutObjectRequest
             {
                 BucketName = userData.BucketName,
                 Key = actualPath + fileName,
                 InputStream = fileControl.InputStream
             };
+            var putResponse = AWSClient.PutObject(putObjectRequest);
+            if (userData.Files.Count(l => l.Name == fileName && l.Url.EndsWith(actualPath) && !l.IsArchived) > 0)//Actualizar Info Archivo
+            {
+                var bddInfo = userData.Files.FirstOrDefault(f => f.Name == fileName);
+                //bddInfo.ModifiedDate = clientDate;
+                //bddInfo.Type = fileControl.ContentType;
+                //bddInfo.FileSize = fileSize;
+                bddInfo.FileVersions.Add(new FileVersion
+                {
+                    AmazonVersionId = putResponse.VersionId,
+                    CreationDate = clientDate,
+                    FileSize = fileSize,
+                    IsArchived = false
+                });
+                _writeOnlyRepository.Update(bddInfo);
+            }
+            else//Archivo nuevo
+            {
+                var newFile = new File
+                {
+                    Name = fileName,
+                    CreatedDate = clientDate,
+                    ModifiedDate = clientDate,
+                    FileSize = fileSize,
+                    Type = fileControl.ContentType,
+                    Url = actualPath,
+                    IsArchived = false,
+                    IsDirectory = false
+                };
+                //if (userData.Files == null)//Si es primer archivo subido por el usuario
+                //{
+                //    userData.Files = new List<File> {newFile};
+                //    var retorno = _writeOnlyRepository.Update(userData);
+                //    var file = retorno.Files.FirstOrDefault();
+                //    file.FileVersions = new List<FileVersion>();
+                //    file.FileVersions.Add(new FileVersion
+                //    {
+                //        AmazonVersionId = putResponse.VersionId,
+                //        CreationDate = clientDate,
+                //        FileSize = fileSize,
+                //        IsArchived = false
+                //    });
+                //    _writeOnlyRepository.Update(file);
+                //}
+                //else
+                //{
+                userData.Files.Add(newFile);
+                var archivo = _writeOnlyRepository.Update(userData).Files.LastOrDefault();
+                archivo.FileVersions = new List<FileVersion>();
+                archivo.FileVersions.Add(new FileVersion
+                {
+                    AmazonVersionId = putResponse.VersionId,
+                    CreationDate = clientDate,
+                    FileSize = fileSize,
+                    IsArchived = false
+                });
+                _writeOnlyRepository.Update(archivo);
 
+                //}
 
+            }
+            //fileControl.SaveAs(path);
 
-            AWSClient.PutObject(putObjectRequest);
-
-
-            return true;
+           return true;
             
         }
 
