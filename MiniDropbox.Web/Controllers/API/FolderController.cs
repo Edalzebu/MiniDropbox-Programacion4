@@ -60,8 +60,12 @@ namespace MiniDropbox.Web.Controllers.API
         }
 
         // PUT api/folder/5
-        public void Put([FromUri] string folderName,[FromUri] string currentPath, [FromUri] string token) // funcion para crear un folder, devuelve la listqa del directorio
+        public bool Put([FromUri] string folderName,[FromUri] string currentPath, [FromUri] string token) // funcion para crear un folder, devuelve la listqa del directorio
         {
+            if (currentPath == null)
+            {
+                currentPath = "";
+            }
             var account = CheckPermissions(token);
             if (CheckCuenta(account))
             {
@@ -69,11 +73,12 @@ namespace MiniDropbox.Web.Controllers.API
                 {
                     var modelo = new FolderModel();
                     modelo.listaModels = ListFolder(currentPath,account);
-                    
+                    return true;
                 }
                 
             }
-            
+            return false;
+
         }
 
         // DELETE api/folder/5
@@ -190,13 +195,17 @@ namespace MiniDropbox.Web.Controllers.API
         private Account CheckPermissions(string token) // Hace un check si el token existe, si existe devuelve una cuenta, sino null;
         {
             var access = _readOnlyRepository.First<ApiKeys>(x => x.Token == token);
-            if (access.IsTokenActive())
+            if (access != null)
             {
+                if (access.IsTokenActive())
+                {
 
-                var account = _readOnlyRepository.First<Account>(x => x.Id == access.UserId);
-                return account;
+                    var account = _readOnlyRepository.First<Account>(x => x.Id == access.UserId);
+                    return account;
 
+                }
             }
+            
 
             return null;
         }

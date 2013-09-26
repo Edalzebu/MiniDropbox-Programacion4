@@ -217,9 +217,11 @@
                         else if (property.Name == "Selected")
                         {
                             var modelo = model;
-                           
-                            //<input type="checkbox" name="selectedObjects" onclick='@Url.Action("Checked","Disk", new { id = modelo.Id})' onchange='@Url.Action("Checked", new {id =modelo.Id})' onselect='@Url.Action("Checked", new {id =modelo.Id})'> </input>
-                            Html.CheckBox(" ", model.Selected);
+
+                            using ( Html.BeginForm("Checked"))
+                            {
+                                <input id="responsable" name="checkResp" type="checkbox" />
+                            }
 
                         }
                         else
