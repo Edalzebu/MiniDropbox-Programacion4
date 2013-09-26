@@ -73,9 +73,16 @@ namespace MiniDropbox.Web.Controllers
             }
 
             
-            var newBucket = new PutBucketRequest { BucketName = account.BucketName };
+            var newBucket = new PutBucketRequest { BucketName = account.BucketName};
             AWSClient.PutBucket(newBucket);
-           
+
+            var bucketVersioningRequest = new SetBucketVersioningRequest
+            {
+                BucketName = account.BucketName,
+                VersioningConfig = new S3BucketVersioningConfig {Status = "Enabled"}
+            };
+            AWSClient.SetBucketVersioning(bucketVersioningRequest);
+
             var putFolder = new PutObjectRequest{BucketName = account.BucketName, Key = "Shared/",ContentBody = string.Empty};
             AWSClient.PutObject(putFolder);
 

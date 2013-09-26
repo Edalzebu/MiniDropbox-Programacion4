@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Entities\Account.cs" />
     <Compile Include="Entities\File.cs" />
+    <Compile Include="Entities\FileVersion.cs" />
     <Compile Include="Entities\IEntity.cs" />
     <Compile Include="Entities\Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

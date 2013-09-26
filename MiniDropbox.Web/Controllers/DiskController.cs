@@ -8,6 +8,7 @@ using Amazon.S3.Model;
 using AutoMapper;
 using BootstrapMvcSample.Controllers;
 using MiniDropbox.Domain;
+using MiniDropbox.Domain.Entities;
 using MiniDropbox.Domain.Services;
 using MiniDropbox.Web.Models;
 using File = MiniDropbox.Domain.File;
@@ -62,6 +63,12 @@ namespace MiniDropbox.Web.Controllers
 
             return View(userContent);
         }
+
+            [HttpPost]
+        public ActionResult ListAllContent(List<DiskContentModel> Model)
+            {
+                return null;
+            }
 
         [HttpGet]
         public PartialViewResult FileUploadModal()
@@ -120,17 +127,33 @@ namespace MiniDropbox.Web.Controllers
 
             //var fileInfo = new DirectoryInfo(serverFolderPath+fileName);
 
+            var putObjectRequest = new PutObjectRequest
+            {
+                BucketName = userData.BucketName,
+                Key = actualPath + fileName,
+                InputStream = fileControl.InputStream
+            };
+
+            var putResponse= AWSClient.PutObject(putObjectRequest);
+
             if (userData.Files.Count(l=>l.Name==fileName && l.Url.EndsWith(actualPath) && !l.IsArchived)>0)//Actualizar Info Archivo
             {
                 var bddInfo = userData.Files.FirstOrDefault(f => f.Name == fileName);
-                bddInfo.ModifiedDate = clientDate;
-                bddInfo.Type = fileControl.ContentType;
-                bddInfo.FileSize = fileSize;
+                //bddInfo.ModifiedDate = clientDate;
+                //bddInfo.Type = fileControl.ContentType;
+                //bddInfo.FileSize = fileSize;
+                bddInfo.FileVersions.Add(new FileVersion
+                {
+                    AmazonVersionId = putResponse.VersionId,
+                    CreationDate = clientDate,
+                    FileSize = fileSize,
+                    IsArchived = false
+                });
                 _writeOnlyRepository.Update(bddInfo);
             }
             else
             {
-                userData.Files.Add(new File
+                var newFile = new File
                 {
                     Name = fileName,
                     CreatedDate = clientDate,
@@ -140,19 +163,22 @@ namespace MiniDropbox.Web.Controllers
                     Url = actualPath,
                     IsArchived = false,
                     IsDirectory = false
+                };
+
+                newFile.FileVersions.Add(new FileVersion
+                {
+                    AmazonVersionId = putResponse.VersionId,
+                    CreationDate = clientDate,
+                    FileSize = fileSize,
+                    IsArchived = false
                 });
+
+                userData.Files.Add(newFile);
                 _writeOnlyRepository.Update(userData);
             }
 
             //fileControl.SaveAs(path);
-            var putObjectRequest = new PutObjectRequest
-            {
-                BucketName = userData.BucketName,
-                Key = actualPath + fileName,
-                InputStream = fileControl.InputStream
-            };
-
-            AWSClient.PutObject(putObjectRequest);
+            
 
             Success("File uploaded successfully!!! :D");
             return RedirectToAction("ListAllContent");
