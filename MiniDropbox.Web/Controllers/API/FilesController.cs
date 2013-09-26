@@ -71,6 +71,52 @@ namespace MiniDropbox.Web.Controllers.API
             
         }
 
+        public bool Post([FromUri] string token, [FromUri] long objectId, [FromUri] string newName) // Para subir un archivo
+        {
+
+            var userData = CheckPermissions(token);
+            var fileData = _readOnlyRepository.GetById<File>(objectId);
+            var clientDate = DateTime.Now;
+
+            if (!fileData.IsDirectory)
+            {
+                //Copy the object
+                var copyRequest = new CopyObjectRequest
+                {
+                    SourceBucket = userData.BucketName,
+                    SourceKey = fileData.Url + fileData.Name,
+                    DestinationBucket = userData.BucketName,
+                    DestinationKey = fileData.Url + newName + "." + (fileData.Name.Split('.').LastOrDefault()),
+                    CannedACL = S3CannedACL.PublicRead
+                };
+
+                AWSClient.CopyObject(copyRequest);
+
+                //Delete the original
+                var deleteRequest = new DeleteObjectRequest
+                {
+                    BucketName = userData.BucketName,
+                    Key = fileData.Url + fileData.Name
+                };
+                AWSClient.DeleteObject(deleteRequest);
+
+                fileData.ModifiedDate = clientDate;
+                fileData.Name = newName + "." + (fileData.Name.Split('.').LastOrDefault());
+                _writeOnlyRepository.Update(fileData);
+                return true;
+            }
+            else
+            {
+                RenameFolder(objectId, fileData.Name, newName, clientDate.ToString());
+                fileData.ModifiedDate = clientDate;
+                fileData.Name = newName;
+                _writeOnlyRepository.Update(fileData);
+                return false;
+            }
+
+
+        }
+
        // DELETE api/files/5
         public bool Delete([FromUri]int id, [FromUri]string token)
         {
@@ -86,6 +132,71 @@ namespace MiniDropbox.Web.Controllers.API
             return false;
         }
 
+        public void RenameFolder(long objectId, string oldObjectName, string newObjectName, string clientDateTime2)
+        {
+            var userData = _readOnlyRepository.First<Account>(a => a.EMail == User.Identity.Name);
+            var fileData = userData.Files.FirstOrDefault(f => f.Id == objectId);
+
+            var userFiles = userData.Files.Where(t => t.Url.Contains(fileData.Name));
+
+            var clientDate = Convert.ToDateTime(clientDateTime2);
+            var newFoldUrl = string.IsNullOrEmpty(fileData.Url) || string.IsNullOrWhiteSpace(fileData.Url)
+                ? newObjectName + "/"
+                : fileData.Url.Replace(oldObjectName, newObjectName) + fileData.Name + "/";
+
+            var putFolder = new PutObjectRequest { BucketName = userData.BucketName, Key = newFoldUrl, ContentBody = string.Empty };
+            AWSClient.PutObject(putFolder);
+
+            foreach (var file in userFiles)
+            {
+                if (file == null)
+                    continue;
+
+                if (file.IsDirectory)
+                {
+                    RenameFolder(file.Id, oldObjectName, newObjectName, clientDateTime2);
+                }
+                else
+                {
+                    //Copy the object
+                    var newUrl = file.Url.Replace(oldObjectName, newObjectName) + file.Name;
+
+                    var copyRequest = new CopyObjectRequest
+                    {
+                        SourceBucket = userData.BucketName,
+                        SourceKey = file.Url + file.Name,
+                        DestinationBucket = userData.BucketName,
+                        DestinationKey = newUrl,
+                        CannedACL = S3CannedACL.PublicRead
+                    };
+
+                    AWSClient.CopyObject(copyRequest);
+
+                    //Delete the original
+                    var deleteRequest = new DeleteObjectRequest
+                    {
+                        BucketName = userData.BucketName,
+                        Key = file.Url + file.Name
+                    };
+                    AWSClient.DeleteObject(deleteRequest);
+
+                    file.ModifiedDate = clientDate;
+                    file.Url = file.Url.Replace(oldObjectName, newObjectName);
+                    _writeOnlyRepository.Update(file);
+                }
+            }//fin foreach
+
+            var deleteFolderRequest = new DeleteObjectRequest
+            {
+                BucketName = userData.BucketName,
+                Key = fileData.Url + fileData.Name + "/"
+            };
+            AWSClient.DeleteObject(deleteFolderRequest);
+            var newFolderUrl = fileData.Url.Replace(oldObjectName, newObjectName);
+            fileData.Url = newFolderUrl;
+
+            _writeOnlyRepository.Update(fileData);
+        }
         private Account CheckPermissions(string token) // Hace un check si el token existe, si existe devuelve una cuenta, sino null;
         {
             var access = _readOnlyRepository.First<ApiKeys>(x => x.Token == token);
