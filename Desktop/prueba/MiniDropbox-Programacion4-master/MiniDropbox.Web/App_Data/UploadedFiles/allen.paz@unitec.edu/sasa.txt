@@ -1,0 +1,6 @@
+public classs when_$when&
+{
+	Establish context =()=>{}:
+	Bescause of =()=>();
+	It Should_$should$=()=>{$END$};	
+}

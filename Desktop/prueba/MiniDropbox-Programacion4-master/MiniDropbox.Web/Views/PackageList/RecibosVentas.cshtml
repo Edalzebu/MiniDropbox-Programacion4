@@ -1,0 +1,47 @@
+﻿@using BootstrapSupport
+@using NHibernate.Criterion
+@model List<MiniDropbox.Domain.RecibosVentas>
+
+@{
+    ViewBag.Title = "Packages List";
+    Layout = "~/Views/shared/_BootstrapLayout.basic.cshtml";
+}
+
+<h2 style="text-align: center">Purchases made on this site</h2>
+<br/>
+
+<table class="table table-striped ">
+    <caption></caption>
+    <thead class="text-center">
+        <tr>
+            @if(Model.Count>0){
+            foreach (var property in Model[0].VisibleProperties())
+            {
+    <th>
+        @property.GetLabel().ToSeparatedWords()
+    </th>       
+}
+}
+            <th></th>
+        </tr>
+    </thead>
+    <p>
+    </p>
+    @{ int index = 0; }
+    @foreach (var model in Model)
+    {
+        ViewData[index.ToString()] = model;
+        <tr>
+            @foreach (var property in model.VisibleProperties())
+            {
+                <td>
+                    @Html.Display(index + "." + property.Name)
+                </td>
+            }
+            <td>
+            </td>
+        </tr>
+        index++;
+    }
+
+</table>
