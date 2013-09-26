@@ -118,7 +118,7 @@
         @using (@Html.BeginForm("ListFileSearchResult", "SearchResult"))
         {
             <input type="text" id="searchTxt" name="searchTxt" class="input-medium inline search-query"/>
-            <button class="btn btn-inverse btn-small" type="submit">Search</button>       
+               
         }
 </div>
 <div class="pull-right" style="vertical-align: central">
@@ -217,8 +217,10 @@
                         else if (property.Name == "Selected")
                         {
                             var modelo = model;
-                            <input type="checkbox" name="selectedObjects" onclick='@Url.Action("Checked","Disk", new { id = modelo.Id})' onchange='@Url.Action("Checked", new {id =modelo.Id})' > </input>
-                            
+                           
+                            //<input type="checkbox" name="selectedObjects" onclick='@Url.Action("Checked","Disk", new { id = modelo.Id})' onchange='@Url.Action("Checked", new {id =modelo.Id})' onselect='@Url.Action("Checked", new {id =modelo.Id})'> </input>
+                            Html.CheckBox(" ", model.Selected);
+
                         }
                         else
                         {

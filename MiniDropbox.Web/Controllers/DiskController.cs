@@ -795,7 +795,7 @@ namespace MiniDropbox.Web.Controllers
             // return File(t.FileStream, fileData.Type);
         }
 
-        public ActionResult Checked(int id)
+        public ActionResult Checked(long id)
         {
             return View();
         }

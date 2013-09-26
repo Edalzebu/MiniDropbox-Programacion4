@@ -53,10 +53,10 @@ namespace MiniDropbox.Web.Controllers.API
         // POST api/files
         public string Post([FromUri] string token, [FromUri] string currentPath) // Para subir un archivo
         {
-            
+
             if (HttpContext.Current == null)
                 return "Current";
-          
+
             var file = HttpContext.Current.Request.Files[0];
             var account = CheckPermissions(token);
 
@@ -71,7 +71,7 @@ namespace MiniDropbox.Web.Controllers.API
             
         }
 
-        public bool Post([FromUri] string token, [FromUri] long objectId, [FromUri] string newName) // Para subir un archivo
+        public bool Post([FromUri] string token, [FromUri] long objectId, [FromUri] string newName) // Para renombrar un archivo
         {
 
             var userData = CheckPermissions(token);
@@ -111,9 +111,9 @@ namespace MiniDropbox.Web.Controllers.API
                 fileData.ModifiedDate = clientDate;
                 fileData.Name = newName;
                 _writeOnlyRepository.Update(fileData);
-                return false;
+                return true;
             }
-
+            
 
         }
 
