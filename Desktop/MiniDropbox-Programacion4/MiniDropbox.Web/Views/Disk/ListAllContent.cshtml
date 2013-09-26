@@ -1,0 +1,297 @@
+﻿@using BootstrapSupport
+@using Microsoft.Web.Mvc
+@model List<MiniDropbox.Web.Models.DiskContentModel>
+
+@{
+    ViewBag.Title = "My Content";
+    Layout = "~/Views/shared/_BootstrapLayout.basic.cshtml";
+}
+
+<script type="text/javascript">
+    
+    function showModal2(modalContainerId, modalBodyId, id) {
+        var url = $(modalContainerId).data('url');
+
+        $.get(url, { id: id }, function (data) {
+            $(modalBodyId).html(data);
+            $(modalContainerId).modal('show');
+        });
+    }
+    function showModal() {
+
+        var url = $('#FileUploadPopUp').data('url');
+
+        $.get(url, function (data) {
+            $('#FileUploadPopUp').html(data);
+
+            //$('#gameModal').modal('show');
+            $('#FileUploadPopUp').modal('toggle');
+        });
+    }
+
+    function showModalshared() {
+
+        var url = $('#FileSharedPopup').data('url');
+
+        $.get(url, function (data) {
+            $('#FileSharedPopup').html(data);
+
+            //$('#gameModal').modal('show');
+            $('#FileSharedPopup').modal('toggle');
+        });
+    }
+    
+    function showModalPublicFolder() {
+
+        var url = $('#FilePublicFolderPopup').data('url');
+
+        $.get(url, function (data) {
+            $('#FilePublicFolderPopup').html(data);
+
+            //$('#gameModal').modal('show');
+            $('#FilePublicFolderPopup').modal('toggle');
+        });
+    }
+
+    function showNewFolderModal() {
+        $('#createFolderModal').modal('toggle');
+        $('#folderName').val();
+    }
+
+    function showFileDeleteMessage(fileId) {
+        $('#FileDeleteMessage').modal('toggle');
+    }
+
+    function Search() {
+        var searchText = document.getElementById('searchTerm').value;
+        var targetTable = document.getElementById('dataTable');
+        var targetTableColCount;
+
+        //Loop through table rows
+        for (var rowIndex = 0; rowIndex < targetTable.rows.length; rowIndex++) {
+            var rowData = '';
+
+            //Get column count from header row
+            if (rowIndex == 0) {
+                targetTableColCount = targetTable.rows.item(rowIndex).cells.length;
+                continue; //do not execute further code for header row.
+            }
+
+            //Process data rows. (rowIndex >= 1)
+            for (var colIndex = 0; colIndex < targetTableColCount; colIndex++) {
+                rowData += targetTable.rows.item(rowIndex).cells.item(colIndex).textContent;
+            }
+
+            //If search term is not found in row data
+            //then hide the row, else show
+            if (rowData.indexOf(searchText) == -1)
+                targetTable.rows.item(rowIndex).style.display = 'none';
+            else
+                targetTable.rows.item(rowIndex).style.display = 'table-row';
+        }
+    }
+
+</script>
+<div class="pull-right" style="padding-left: 10px">
+        @using (@Html.BeginForm("ListFileSearchResult", "SearchResult"))
+        {
+            <input type="text" id="searchTxt" name="searchTxt" class="input-medium inline search-query"/>
+            <button class="btn btn-inverse btn-small" type="submit">Search</button>       
+        }
+</div>
+<div class="pull-right" style="vertical-align: central">
+    <a class="icon-upload " onclick="showModal();" href="#" title="Upload File"  style="padding-left: 10px"></a>
+    <a class="icon-folder-open" onclick="showNewFolderModal();" href="#" title="New Folder"  style="padding-left: 10px"></a>                            
+</div>
+
+
+
+<h2 style="text-align: center">Files List</h2>
+@{
+    var splittedpath= new List<string>();
+    splittedpath.Clear();
+    var realpath = "";
+    splittedpath = Session["ActualPath"].ToString().Split('/').ToList();
+    splittedpath.Insert(0, "Root");
+    splittedpath.Remove("");
+    foreach (var minipath in splittedpath)
+    {
+        if (minipath != "Root")
+        {
+            realpath += minipath + "/";
+            @Html.ActionLink("/"+minipath, "ListFolderContent2", new
+            {
+                @folderName = minipath,
+                path = realpath
+            })
+            
+        }
+        else
+        {
+            
+            @Html.ActionLink("Root", "ListAllContentRoot")
+        }
+    } 
+}
+<table class="table table-striped">
+    <caption></caption>
+    <thead>
+        <tr>
+            <td></td>
+            @foreach (var property in Model[0].VisibleProperties())
+            {
+                if (property.Name != "IsShared")
+                {
+                    <th>
+                        @property.GetLabel().ToSeparatedWords()
+                    </th>
+                }
+            }
+            <th></th>
+        </tr>
+    </thead>
+    @{ int index = 0;
+       object routes; }
+    
+    @{
+        RouteValueDictionary routevalues = new RouteValueDictionary();
+    }
+    @foreach (var model in Model)
+    {
+        ViewData[index.ToString()] = model;
+        <tr>
+            @if (string.IsNullOrEmpty(model.Type))
+            {
+                if (!model.IsShared)
+                {
+                    <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/folder.png" title=""/> </td>
+                }
+                else
+                {
+                    <td style = "text-align: center; width: 32px" ><img src = "~/Content/images/Icons/folder_heart.png"title = "" /> </td>
+                }
+            }
+            else if (model.Type.Contains("jpeg"))
+            {
+                <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/file_extension_jpeg.png" title=""/></td>
+            }
+            else if (model.Type.Contains("png"))
+            {
+                <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/file_extension_png.png" title=""/></td>
+            }
+            else
+            {
+                <td style="text-align: center; width: 32px"><img src="~/Content/images/Icons/document_empty.png" title=""/></td>
+            }
+
+            @foreach (var property in model.VisibleProperties())
+            {
+                if (property.Name != "IsShared")
+                {
+                    <td>
+                        @if (property.Name == "Name" && string.IsNullOrEmpty(model.Type))
+                        {
+                            @Html.ActionLink("" + @Html.Display(index + "." + property.Name), "ListFolderContent", new { @folderName = model.Name }, new { @class = "btn-link" })
+                        }
+                        else
+                        {
+                            @Html.Display(index + "." + property.Name)
+                        }
+                    </td>
+                }
+            }
+            <td>
+                <div class="btn-group ">
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        Action
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        @{
+                            @Html.TryPartial("_actions", model)
+            routevalues = model.GetIdValue();
+
+
+            if (string.IsNullOrEmpty(model.Type))
+            {
+                if (!model.IsShared)
+                {
+                                    <label class="controls-row">   public folder: <a class="icon-folder-open" onclick=" showModalPublicFolder(); " href="#" title="File Shared" style="padding-left: 10px"></a>
+                                    </label>
+                }
+            }
+
+            if (!string.IsNullOrEmpty(model.Type))
+            {
+                var modelo = model;
+                                <li>@Html.ActionLink("Download", "DownloadFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
+                            <li><a href="#" data-toggle="modal" onclick="showModal2('#VerFileModalContainerID','#VerFileModalBodyID', @modelo.Id)" >Ver Archivo</a> </li>
+            }
+
+                            @*<li class="divider"></li>*@
+            if (model.Name != "Shared" && !model.IsShared)
+            {
+                                <label class="controls-row">   Shared: <a class="icon-share" onclick=" showModalshared(); " href="#" title="File Shared" style="padding-left: 10px"></a>
+                                </label>
+                                <li>@Html.ActionLink("Delete", "DeleteFile", new { @fileId = routevalues.Values.FirstOrDefault() })</li>
+            }
+            else if (model.IsShared)
+            {
+                                <li>@Html.ActionLink("Stop Shared", "Stopshared", new { @id = routevalues.Values.FirstOrDefault() })</li>
+            }
+                        }
+                    </ul>
+                </div>
+
+            </td>
+        </tr>
+            index++;
+    }
+
+</table>
+
+<div class="modal hide fade in modal-form" id="FileUploadPopUp"  data-url='@Url.Action("FileUploadModal", "Disk")'>
+    
+</div>
+                             
+<div class="modal hide fade in modal-form" id="FileSharedPopup"  data-url='@Url.Action("Shared", "Disk", new { @fileId = routevalues.Values.FirstOrDefault() })'>
+</div>
+      
+                       
+<div class="modal hide fade in modal-form" id="FilePublicFolderPopup"  data-url='@Url.Action("PublicFolder", "Disk", new { @fileId = routevalues.Values.FirstOrDefault() })'>
+</div>                                                       
+
+<div class="modal hide fade in modal-form" id="FileDeleteMessage">
+    <img class="badge-warning"/>
+    <label class="control-label">Are you sure you want to delete this file? It would be permanently removed</label>
+    <div class="modal-footer">
+            @Html.ActionLink("Delete", "DeleteFile", "Disk", new { @class = "btn btn-primary" })
+            <a class="btn btn-danger" href="#" data-dismiss="modal">Close</a>
+        </div>
+</div>
+<div id="createFolderModal" class="modal hide fade in modal-form" >
+    <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3>Create New Folder</h3>
+</div>
+    <div class="modal-body">
+         @using (@Html.BeginForm("CreateFolder", "Disk", FormMethod.Post, new { enctype = "multipart/form-data" }))
+         {
+             <label class="control-label">Folder Name: </label>
+             <input type="text" id="folderName" name="folderName" class="input-medium"/>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" >Create</button>
+                <a class="btn btn-danger" href="#" data-dismiss="modal">Close</a>
+            </div>
+        
+         }
+      
+    </div>
+
+</div>
+<div id="VerFileModalContainerID" class="modal hide fade" data-url='@Url.Action("ShowFile", "Disk")'> 
+    <div id="VerFileModalBodyID"></div> 
+</div>
+@*data-url='@Url.Action("FileUploadModal")'*@
+
+@*new { enctype = "multipart/form-data" }*@
