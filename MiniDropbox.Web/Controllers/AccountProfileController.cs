@@ -24,6 +24,14 @@ namespace MiniDropbox.Web.Controllers
         {
             //long userId = Convert.ToInt64(Session["userId"]);
             var userData = _readOnlyRepository.First<Account>(x=>x.EMail==User.Identity.Name);
+            int tamanio=0;
+            foreach (var lectura in userData.Files)
+            {
+                tamanio += lectura.FileSize;
+                
+            }
+            userData.UsedSpace = (tamanio / 1024)/1024;
+           
             if (userData.SpaceLimit > 1024)
             {
                 var newspace = userData.SpaceLimit / 1024;

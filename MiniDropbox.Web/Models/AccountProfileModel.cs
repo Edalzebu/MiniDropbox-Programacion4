@@ -18,7 +18,7 @@ namespace MiniDropbox.Web.Models
             public int SpaceLimit { get; set; }
              [HiddenInput(DisplayValue = true)]
              [Display(Name = "Espacio Usado")]
-            public int UsedSpace { get; set; }
+            public double UsedSpace { get; set; }
             //public string Password{ get; set; }
             //public string EMail { get; set; }
             
